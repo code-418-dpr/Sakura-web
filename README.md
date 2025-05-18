@@ -10,6 +10,8 @@
 [![build](https://github.com/code-418-dpr/Sakura-web/actions/workflows/build.yaml/badge.svg)](https://github.com/code-418-dpr/Sakura-web/actions/workflows/build.yaml)
 [![docker build](https://github.com/code-418-dpr/Sakura-web/actions/workflows/docker.yaml/badge.svg)](https://github.com/code-418-dpr/Sakura-web/actions/workflows/docker.yaml)
 
+Веб-приложение для проекта [Sakura](https://github.com/code-418-dpr/Sakura)
+
 ## Особенности реализации
 
 - ...

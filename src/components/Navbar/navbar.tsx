@@ -2,10 +2,8 @@
 
 import React from "react";
 
-import Link from "next/link";
-
 import { Tab } from "@/types/tabs";
-import { Button, Image, Navbar, NavbarBrand, NavbarContent, NavbarItem, PressEvent } from "@heroui/react";
+import { Button, Image, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, PressEvent } from "@heroui/react";
 
 import { ThemeSwitcher } from "../theme-switcher";
 

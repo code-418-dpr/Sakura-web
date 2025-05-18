@@ -1,6 +1,9 @@
+import React, { Suspense } from "react";
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import Loading from "@/app/loading";
 import { Providers } from "@/components/providres";
 
 import "../globals.css";
@@ -26,7 +29,9 @@ export default function RootLayout({
                 <link rel="icon" href="/favicon.ico" />
             </head>
             <body className={inter.className}>
-                <Providers>{children}</Providers>
+                <Suspense fallback={<Loading />}>
+                    <Providers>{children}</Providers>
+                </Suspense>
             </body>
         </html>
     );

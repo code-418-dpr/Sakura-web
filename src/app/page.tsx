@@ -2,14 +2,18 @@
 
 import { motion } from "framer-motion";
 
+import { useState } from "react";
+
 import FooterElement from "@/components/Footer/footer";
 import NavbarElement from "@/components/Navbar/navbar";
+import { Tab } from "@/types/tabs";
 import { Image } from "@heroui/react";
 
 export default function Home() {
+    const [activeTab, setActiveTab] = useState<Tab>("main");
     return (
         <div>
-            <NavbarElement />
+            <NavbarElement activeTab={activeTab} setActiveTabAction={setActiveTab} />
             <div className="flex min-h-screen flex-col items-center justify-between gap-8 px-4 py-16 md:flex-row md:items-start md:px-8">
                 {/* Левая ветка с анимацией */}
                 <motion.div

@@ -10,7 +10,7 @@ import "../globals.css";
 
 export const metadata: Metadata = {
     title: "Sakura",
-    description: "Созданно в рамках Кубка России по спортивному программированию",
+    description: "Создано в рамках Кубка России по спортивному программированию",
     icons: {
         icon: "/favicon.ico",
     },

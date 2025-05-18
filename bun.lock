@@ -5,6 +5,7 @@
       "name": "sakura-web",
       "dependencies": {
         "@prisma/client": "^6.7.0",
+        "framer-motion": "^12.12.1",
         "next": "~15.3.2",
         "prisma": "^6.7.0",
         "react": "~19.1.0",

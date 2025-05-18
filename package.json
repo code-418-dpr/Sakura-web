@@ -1,0 +1,83 @@
+{
+    "name": "sakura-web",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "lint": "bun run --bun eslint --fix .",
+        "lint:styles": "bun run --bun stylelint **/*.css --fix --ignore-path .gitignore",
+        "format": "bun run --bun prettier . --write --ignore-path .gitignore",
+        "dev": "bun run --bun next dev --turbopack",
+        "build": "bun run --bun next build",
+        "start": "bun run --bun next start",
+        "prepare": "bun run --bun husky",
+        "db:gen": "bun run prisma generate",
+        "db:push": "bun run prisma db push",
+        "db:studio": "bun run prisma studio"
+    },
+    "prisma": {
+        "schema": "./prisma/schema.prisma"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.(json|md|yaml|yml|Dockerfile)": [
+            "bun run --bun prettier --write --ignore-path .gitignore"
+        ],
+        "*.(js|jsx|mjs|ts|tsx)": [
+            "bun run --bun prettier --write --ignore-path .gitignore",
+            "bun run --bun eslint --fix"
+        ],
+        "*.css": [
+            "bun run --bun stylelint --fix --ignore-path .gitignore"
+        ]
+    },
+    "dependencies": {
+        "@prisma/client": "^6.7.0",
+        "next": "~15.3.2",
+        "prisma": "^6.7.0",
+        "react": "~19.1.0",
+        "react-dom": "~19.1.0"
+    },
+    "devDependencies": {
+        "@eslint/compat": "^1.2.7",
+        "@eslint/eslintrc": "^3.3.1",
+        "@eslint/js": "^9.23.0",
+        "@heroui/react": "^2.8.0-beta.4",
+        "@hookform/resolvers": "^5.0.1",
+        "@iconify/react": "^5.2.1",
+        "@next-auth/prisma-adapter": "^1.0.7",
+        "@tailwindcss/postcss": "^4",
+        "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+        "@types/node": "^22.13.14",
+        "@types/react": "^19.0.12",
+        "@types/react-dom": "^19.0.4",
+        "@types/swagger-ui-react": "^5.18.0",
+        "@types/uuid": "^10.0.0",
+        "bcryptjs": "^3.0.2",
+        "date-fns": "^4.1.0",
+        "eslint": "^9.23.0",
+        "eslint-config-next": "~15.2.4",
+        "eslint-config-prettier": "^10.1.1",
+        "husky": "^9.1.7",
+        "lint-staged": "^15.5.0",
+        "next-auth": "^4.24.11",
+        "next-themes": "^0.4.6",
+        "postcss": "^8.5.3",
+        "prettier": "^3.5.3",
+        "prettier-plugin-tailwindcss": "^0.6.8",
+        "stylelint": "^16.17.0",
+        "stylelint-config-recommended": "^16.0.0",
+        "stylelint-config-tailwindcss": "^1.0.0",
+        "tailwind-merge": "^3.2.0",
+        "tailwindcss": "^4.0.17",
+        "tailwindcss-animate": "^1.0.7",
+        "typescript": "^5.8.2",
+        "typescript-eslint": "^8.28.0",
+        "uuid": "^11.1.0",
+        "ymap3-components": "^1.2.3",
+        "zod": "^3.24.3"
+    }
+}

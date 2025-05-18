@@ -1,13 +1,17 @@
 "use client";
 
+import { useState } from "react";
+
 import NavbarElement from "@/components/Navbar/navbar";
+import { Tab } from "@/types/tabs";
 import { Image } from "@heroui/react";
 
 export default function Home() {
+    const [activeTab, setActiveTab] = useState<Tab>("main");
     return (
         <div>
             <section>
-                <NavbarElement />
+                <NavbarElement activeTab={activeTab} setActiveTabAction={setActiveTab} />
             </section>
             <div className="flex min-h-screen items-start justify-between px-8 py-16">
                 {/* Левая ветка */}

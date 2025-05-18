@@ -1,1 +1,1 @@
-export type Tab = "main" | "animals" | "volunteers" | "requests" | "events";
+export type Tab = "main" | "features" | "customers" | "integrations";

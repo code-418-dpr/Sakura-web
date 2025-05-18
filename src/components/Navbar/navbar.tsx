@@ -15,7 +15,7 @@ interface NavbarProps {
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: Tab[] = ["animals", "volunteers", "requests", "events"];
+    const tabs: Tab[] = ["features", "customers", "integrations"];
 
     const handleNavigation = (e: PressEvent, tab: Tab) => {
         setActiveTabAction(tab);

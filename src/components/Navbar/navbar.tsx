@@ -47,8 +47,13 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
 
     const getTabLabel = (tab: Tab): string => {
         const labels = {
+<<<<<<< HEAD
             catalog: "Каталог",
             main: "Main",
+=======
+            features: "Features",
+            customers: "Customers",
+>>>>>>> df544b5 (refactor: remove useless code)
         } as const;
 
         if (tab in labels) {

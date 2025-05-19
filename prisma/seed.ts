@@ -1,7 +1,9 @@
+import { seedLotteries } from "./seeders/lottery";
 import { seedUsers } from "./seeders/user";
 
 export async function main() {
     await seedUsers();
+    await seedLotteries();
 }
 
 void main().catch((e: unknown) => {

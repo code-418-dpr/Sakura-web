@@ -15,23 +15,10 @@ export function PersonalInfo({ user }: PersonalInfoProps) {
             <CardBody className="space-y-4">
                 <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-1">
-                        <p className="text-sm text-white/60">ФИО</p>
-                        <div>
-                            {user.patronymic === undefined ? (
-                                <h2 className="text-l m-0 font-bold text-white">
-                                    {user.lastname + " " + user.firstName}
-                                </h2>
-                            ) : (
-                                <h2 className="text-l m-0 font-bold text-white">
-                                    {user.lastname + " " + user.firstName + " " + user.patronymic!}
-                                </h2>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="space-y-1">
                         <p className="text-sm text-white/60">Имя пользователя</p>
-                        <p className="text-medium font-medium text-white">@{user.userName}</p>
+                        <div>
+                            <h2 className="text-l m-0 font-bold text-white">{user.name}</h2>
+                        </div>
                     </div>
 
                     <div className="space-y-1">

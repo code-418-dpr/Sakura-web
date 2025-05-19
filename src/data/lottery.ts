@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { LotteryRequestData } from "@/types/lottery-request-data";
 
 interface SearchLotteriesParams {
     query?: string;
@@ -60,7 +61,7 @@ export async function searchLotteries(params: SearchLotteriesParams) {
         skip: (page - 1) * pageSize,
         take: pageSize,
     });
-    const total = response.length;
+    const total = await prisma.lottery.count({});
     return {
         items: response.map((lottery) => ({
             ...lottery,
@@ -91,34 +92,22 @@ export const getLotteryAll = async () => {
     return prisma.lottery.findMany({});
 };
 
-export const createLottery = async (
-    title: string,
-    description: string,
-    isReal: boolean,
-    participantsCount: number,
-    vipParticipantsCount: number,
-    winnersCount: number,
-    primeWinnersCount: number,
-    ticketPrice: number,
-    vipDiscount: number,
-    start: Date,
-    end: Date,
-    rules: string,
-) => {
+export const getLotteryPrice = async (id: string) => {
+    const lottery = await prisma.lottery.findFirst({
+        where: { id: { equals: id } },
+        select: { ticketPrice: true, vipDiscount: true },
+    });
+    if (!lottery) {
+        throw new Error("Lottery not found");
+    }
+    return {
+        ticketPrice: lottery.ticketPrice,
+        primeTicketPrice: lottery.ticketPrice * (lottery.vipDiscount / 100),
+    };
+};
+
+export const createLottery = async (data: LotteryRequestData) => {
     return prisma.lottery.create({
-        data: {
-            title,
-            description,
-            isReal,
-            participantsCount,
-            vipParticipantsCount,
-            winnersCount,
-            primeWinnersCount,
-            ticketPrice,
-            vipDiscount,
-            start,
-            end,
-            rules,
-        },
+        data,
     });
 };

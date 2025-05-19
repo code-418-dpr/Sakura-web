@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import { SearchForm } from "@/app/catalog/_components/search-form";
+import { SearchForm } from "@/components/lotteries/search-form";
 import { MainCards } from "@/components/main-cards";
 import { SearchCardOrDrawer } from "@/components/search-card-or-drawer";
 import { searchLotteries } from "@/data/lottery";

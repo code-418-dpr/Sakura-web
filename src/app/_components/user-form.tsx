@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 // import { register } from "@/api/accounts";
 import PasswordInput from "@/components/password-input";
-import { createUser } from "@/data/user";
+import { awardReferalUserById, createUser, getUserById } from "@/data/user";
 // import { RegisterProps } from "@/models/requests/RegisterProps";
 import { baseRegistrationSchema } from "@/schemas/base-registration-schema";
 import { Alert, Button, Checkbox, Input } from "@heroui/react";
@@ -31,6 +31,7 @@ const userSchema = baseRegistrationSchema
         termsOfUse: z.literal<boolean>(true, {
             errorMap: () => ({ message: "Необходимо принять условия" }),
         }),
+        referal: z.string().nullish(),
     })
     .refine((data) => data.password === data.passwordRepeat, {
         message: "Пароли не совпадают",
@@ -66,6 +67,12 @@ export default function UserForm() {
             console.log(data);
 
             await new Promise((resolve) => setTimeout(resolve, 500));
+
+            if (data.referal) {
+                const user = await getUserById(data.referal);
+                if (!user) throw new Error("Реферальная ссылка не найдена");
+                await awardReferalUserById(data.referal);
+            }
 
             await createUser(data.nickname, data.email, data.password);
             const result = await signIn("credentials", {
@@ -123,6 +130,16 @@ export default function UserForm() {
                     isInvalid={!!errors.passwordRepeat}
                     errorMessage={errors.passwordRepeat?.message}
                 />
+
+                <Input
+                    label="Реферальный код"
+                    type="text"
+                    variant="bordered"
+                    {...registerValidator("referal")}
+                    isInvalid={!!errors.referal}
+                    errorMessage={errors.referal?.message}
+                />
+
                 <Checkbox {...registerValidator("privacyPolicy")} isInvalid={!!errors.privacyPolicy}>
                     Согласен с обработкой персональных данных
                 </Checkbox>

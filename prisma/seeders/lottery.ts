@@ -1,5 +1,6 @@
 import { Prisma } from "@/app/generated/prisma";
 import { createLottery, getLotteryByTitle } from "@/data/lottery";
+import { LotteryRequestData } from "@/types/lottery-request-data";
 
 const LOTTERIES: Prisma.LotteryCreateInput[] = [
     ...Array(10)
@@ -40,20 +41,21 @@ export async function seedLotteries() {
         rules,
     } of LOTTERIES) {
         if (!(await getLotteryByTitle(title))) {
-            await createLottery(
-                title,
-                description,
-                isReal,
-                participantsCount,
-                vipParticipantsCount,
-                winnersCount,
-                primeWinnersCount,
-                ticketPrice,
-                vipDiscount,
-                start as Date,
-                end as Date,
-                rules,
-            );
+            const requestData: LotteryRequestData = {
+                title: title,
+                description: description,
+                isReal: isReal,
+                participantsCount: participantsCount,
+                vipParticipantsCount: vipParticipantsCount,
+                winnersCount: winnersCount,
+                primeWinnersCount: primeWinnersCount,
+                ticketPrice: ticketPrice,
+                vipDiscount: vipDiscount,
+                start: start as Date,
+                end: end as Date,
+                rules: rules,
+            };
+            await createLottery(requestData);
         }
     }
 }

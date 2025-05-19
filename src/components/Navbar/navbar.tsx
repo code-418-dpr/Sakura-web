@@ -38,7 +38,8 @@ interface NavbarProps {
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
     const tabs: PageTab[] = ["catalog"];
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen: isAuthOpen, onOpen: onAuthOpen, onOpenChange: onAuthOpenChange } = useDisclosure();
+    const { isOpen: isReferalOpen, onOpen: onReferalOpen, onOpenChange: onReferalOpenChange } = useDisclosure();
     const { user, isLoading, isAuthenticated } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
@@ -139,6 +140,9 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                                         <DropdownSection aria-label="Profile" showDivider>
                                             <DropdownItem key="achievments">Достижения</DropdownItem>
                                             <DropdownItem key="notifications">Уведомления</DropdownItem>
+                                            <DropdownItem key="invite" onPress={onReferalOpen}>
+                                                Пригласить друга
+                                            </DropdownItem>
                                         </DropdownSection>
                                         <DropdownSection aria-label="Logout">
                                             <DropdownItem
@@ -154,14 +158,26 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                                     </DropdownMenu>
                                 </Dropdown>
                             </NavbarItem>
+                            <ModalOrDrawer
+                                label="Реферальный код"
+                                isOpen={isReferalOpen}
+                                onOpenChangeAction={onReferalOpenChange}
+                                size="2xl"
+                            >
+                                <p>Ваш реферальный код: {user?.id ?? ""}</p>
+                            </ModalOrDrawer>
                         </>
                     ) : (
                         <NavbarItem>
                             <>
-                                <Button color="primary" variant="flat" onPress={onOpen}>
+                                <Button color="primary" variant="flat" onPress={onAuthOpen}>
                                     Войти
                                 </Button>
-                                <ModalOrDrawer label="Авторизация" isOpen={isOpen} onOpenChangeAction={onOpenChange}>
+                                <ModalOrDrawer
+                                    label="Авторизация"
+                                    isOpen={isAuthOpen}
+                                    onOpenChangeAction={onAuthOpenChange}
+                                >
                                     <AuthForm />
                                 </ModalOrDrawer>
                             </>

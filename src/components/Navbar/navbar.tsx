@@ -1,12 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 
 import { Tab } from "@/types/tabs";
-import { Button, Image, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, PressEvent } from "@heroui/react";
+import {
+    Button,
+    Image,
+    Link,
+    Navbar,
+    NavbarBrand,
+    NavbarContent,
+    NavbarItem,
+    PressEvent,
+    useDisclosure,
+} from "@heroui/react";
 
+import AuthForm from "../auth/auth-form";
+import ModalOrDrawer from "../modal-or-drawer";
 import { ThemeSwitcher } from "../theme-switcher";
-import ModalAuth from "./modal-auth";
 
 interface NavbarProps {
     activeTab: Tab;
@@ -15,7 +26,7 @@ interface NavbarProps {
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
     const tabs: Tab[] = ["features", "customers", "integrations"];
-    const [isAuthOpen, setIsAuthOpen] = useState(false);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const handleNavigation = (e: PressEvent, tab: Tab) => {
         setActiveTabAction(tab);
     };
@@ -59,22 +70,20 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                 </NavbarContent>
                 <NavbarContent justify="end">
                     <NavbarItem>
-                        <Button
-                            color="primary"
-                            variant="flat"
-                            onPress={() => {
-                                setIsAuthOpen(true);
-                            }}
-                        >
-                            Войти
-                        </Button>
+                        <>
+                            <Button color="primary" variant="flat" onPress={onOpen}>
+                                Войти
+                            </Button>
+                            <ModalOrDrawer label="Авторизация" isOpen={isOpen} onOpenChangeAction={onOpenChange}>
+                                <AuthForm />
+                            </ModalOrDrawer>
+                        </>
                     </NavbarItem>
                     <NavbarItem>
                         <ThemeSwitcher />
                     </NavbarItem>
                 </NavbarContent>
             </Navbar>
-            <ModalAuth isOpen={isAuthOpen} onOpenChangeAction={setIsAuthOpen} />
         </>
     );
 }

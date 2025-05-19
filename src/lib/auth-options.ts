@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+import { UserRole } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
@@ -15,15 +16,21 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials) {
                 try {
-                    if (!credentials?.email || !credentials.password) return null;
+                    if (!credentials?.email || !credentials.password) {
+                        console.log("Нет email или пароля");
+                        return null;
+                    }
 
                     if (
+                        process.env.ADMIN_EMAIL &&
+                        process.env.ADMIN_PASSWORD &&
                         credentials.email === process.env.ADMIN_EMAIL &&
                         credentials.password === process.env.ADMIN_PASSWORD
                     ) {
                         return {
                             id: "admin-id",
                             email: process.env.ADMIN_EMAIL,
+                            role: "ADMIN",
                         };
                     }
 
@@ -32,16 +39,17 @@ export const authOptions: NextAuthOptions = {
                     });
 
                     if (!user || !(await bcrypt.compare(credentials.password, user.password))) {
-                        throw new Error("Неверный email или пароль");
+                        return null;
                     }
 
                     return {
                         id: user.id,
                         email: user.email,
+                        role: user.role,
                     };
                 } catch (error) {
                     console.error("Auth error:", error);
-                    throw error;
+                    return null;
                 }
             },
         }),
@@ -50,13 +58,14 @@ export const authOptions: NextAuthOptions = {
         jwt({ token, user }) {
             if (user as User | undefined) {
                 token.id = user.id;
+                token.role = user.role as UserRole;
             }
             return token;
         },
         session({ session, token }) {
-            if (token.id) {
-                session.user.id = token.id;
-            }
+            session.user.id = token.id;
+            session.user.role = token.role as UserRole;
+
             return session;
         },
         redirect({ url, baseUrl }) {
@@ -70,5 +79,5 @@ export const authOptions: NextAuthOptions = {
         signIn: "/login",
         error: "/auth/error",
     },
-    secret: process.env.AUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET,
 };

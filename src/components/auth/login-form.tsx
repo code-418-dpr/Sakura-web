@@ -2,10 +2,10 @@
 
 import { z } from "zod";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import PasswordInput from "@/components/password-input";
@@ -23,7 +23,12 @@ export default function LoginForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
-
+    const { data: session } = useSession();
+    useEffect(() => {
+        if (session) {
+            router.push("/");
+        }
+    }, [session, router]);
     const {
         register,
         handleSubmit,
@@ -37,47 +42,34 @@ export default function LoginForm() {
             setIsLoading(true);
             setError(null);
 
-            console.log("Attempting login with:", data.email);
+            // Правильный вызов signIn с обработкой ошибок
             const result = await signIn("credentials", {
                 redirect: false,
                 email: data.email,
                 password: data.password,
+                callbackUrl: "/",
             });
 
-            console.log("SignIn result:", result);
-
-            if (!result) {
-                setError("Нет ответа от сервера");
+            if (result?.error) {
+                setError("Неверный email или пароль");
                 return;
             }
 
-            if (result.error) {
-                console.error("SignIn error:", result.error);
-                setError(
-                    result.error === "CredentialsSignin"
-                        ? "Неверный email или пароль"
-                        : "Ошибка сервера. Попробуйте позже",
-                );
-                return;
-            }
-
-            if (result.ok) {
-                console.log("Login successful, redirecting...");
-                router.push("/");
-                return;
-            }
-
-            setError("Неизвестная ошибка авторизации");
+            // Ручной редирект при успехе
+            router.push("/");
+            router.refresh();
         } catch (error) {
-            console.error("Unexpected error:", error);
-            setError("Произошла непредвиденная ошибка");
+            setError("Ошибка сервера: " + (error as Error).message);
         } finally {
             setIsLoading(false);
         }
     };
-
+    const handleFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        handleSubmit(onSubmit)(e).catch(console.error);
+    };
     return (
-        <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+        <form onSubmit={handleFormSubmit}>
             <div className="flex flex-col gap-4">
                 <Input
                     label="Email"

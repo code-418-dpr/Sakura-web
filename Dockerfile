@@ -7,7 +7,7 @@ COPY package.json .
 
 FROM base AS prod-deps
 COPY bun.lock .
-COPY prisma prisma
+COPY prisma/schema.prisma prisma/schema.prisma
 RUN --mount=type=cache,id=bun,target=~/.bun/install/cache \
     bun install --frozen-lockfile --production --ignore-scripts
 RUN bun run db:gen

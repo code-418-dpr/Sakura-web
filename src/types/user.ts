@@ -7,5 +7,4 @@ export interface User {
     lastname: string;
     patronymic: string | null | undefined;
     isVip: boolean;
-    permissions: string[];
 }

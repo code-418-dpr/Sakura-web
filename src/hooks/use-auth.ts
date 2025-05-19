@@ -2,6 +2,8 @@
 
 import { useSession } from "next-auth/react";
 
+import { UserRole } from "@/app/generated/prisma";
+
 export const useAuth = () => {
     const { data: session, status } = useSession();
 
@@ -9,6 +11,6 @@ export const useAuth = () => {
         user: session?.user,
         isLoading: status === "loading",
         isAuthenticated: status === "authenticated",
-        role: session?.user.role,
+        role: session?.user.role as UserRole,
     };
 };

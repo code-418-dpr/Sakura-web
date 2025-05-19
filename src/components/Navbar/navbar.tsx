@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { Tab } from "@/types/tabs";
 import { Button, Image, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, PressEvent } from "@heroui/react";
 
 import { ThemeSwitcher } from "../theme-switcher";
+import ModalAuth from "./modal-auth";
 
 interface NavbarProps {
     activeTab: Tab;
@@ -14,7 +15,7 @@ interface NavbarProps {
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
     const tabs: Tab[] = ["features", "customers", "integrations"];
-
+    const [isAuthOpen, setIsAuthOpen] = useState(false);
     const handleNavigation = (e: PressEvent, tab: Tab) => {
         setActiveTabAction(tab);
     };
@@ -34,37 +35,46 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
     };
 
     return (
-        <Navbar>
-            <NavbarBrand className="gap-x-4">
-                <Image alt="Sakura Logo" src="sakura.png" width={32} height={32} />
-                <p className="font-bold text-inherit">SAKURA</p>
-            </NavbarBrand>
-            <NavbarContent className="hidden gap-4 sm:flex" justify="center">
-                {tabs.map((tab) => (
-                    <NavbarItem key={tab}>
-                        <Link
-                            color="foreground"
-                            href={`/${tab}`}
-                            onPressEnd={(e: PressEvent) => {
-                                handleNavigation(e, tab);
+        <>
+            <Navbar>
+                <NavbarBrand className="gap-x-4">
+                    <Image alt="Sakura Logo" src="sakura.png" width={32} height={32} />
+                    <p className="font-bold text-inherit">SAKURA</p>
+                </NavbarBrand>
+                <NavbarContent className="hidden gap-4 sm:flex" justify="center">
+                    {tabs.map((tab) => (
+                        <NavbarItem key={tab}>
+                            <Link
+                                color="foreground"
+                                href={`/${tab}`}
+                                onPressEnd={(e: PressEvent) => {
+                                    handleNavigation(e, tab);
+                                }}
+                                className={activeTab === tab ? "font-bold" : ""}
+                            >
+                                {getTabLabel(tab)}
+                            </Link>
+                        </NavbarItem>
+                    ))}
+                </NavbarContent>
+                <NavbarContent justify="end">
+                    <NavbarItem>
+                        <Button
+                            color="primary"
+                            variant="flat"
+                            onPress={() => {
+                                setIsAuthOpen(true);
                             }}
-                            className={activeTab === tab ? "font-bold" : ""}
                         >
-                            {getTabLabel(tab)}
-                        </Link>
+                            Войти
+                        </Button>
                     </NavbarItem>
-                ))}
-            </NavbarContent>
-            <NavbarContent justify="end">
-                <NavbarItem>
-                    <Button as={Link} color="primary" href="#" variant="flat">
-                        Войти
-                    </Button>
-                </NavbarItem>
-                <NavbarItem>
-                    <ThemeSwitcher />
-                </NavbarItem>
-            </NavbarContent>
-        </Navbar>
+                    <NavbarItem>
+                        <ThemeSwitcher />
+                    </NavbarItem>
+                </NavbarContent>
+            </Navbar>
+            <ModalAuth isOpen={isAuthOpen} onOpenChangeAction={setIsAuthOpen} />
+        </>
     );
 }

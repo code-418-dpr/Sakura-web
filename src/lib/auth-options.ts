@@ -24,38 +24,20 @@ export const authOptions: NextAuthOptions = {
                         return {
                             id: "admin-id",
                             email: process.env.ADMIN_EMAIL,
-                            name: "Федерация",
-                            role: "admin",
                         };
                     }
 
                     const user = await prisma.user.findUnique({
                         where: { email: credentials.email },
-                        include: {
-                            athlete: true,
-                            representative: true,
-                        },
                     });
 
                     if (!user || !(await bcrypt.compare(credentials.password, user.password))) {
                         throw new Error("Неверный email или пароль");
                     }
-                    if (user.representative.length > 0) {
-                        const representative = user.representative[0];
-                        if (representative.requestStatus === "PENDING") {
-                            throw new Error("Ваша заявка на представительство находится на рассмотрении.");
-                        } else if (representative.requestStatus === "DECLINED") {
-                            throw new Error("Ваша заявка на представительство отклонена.");
-                        }
-                    }
-                    let role: "athlete" | "representative" = "athlete";
-                    if (user.representative.length > 0) role = "representative";
 
                     return {
                         id: user.id,
                         email: user.email,
-                        name: `${user.firstname} ${user.lastname}`,
-                        role,
                     };
                 } catch (error) {
                     console.error("Auth error:", error);
@@ -67,15 +49,13 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         jwt({ token, user }) {
             if (user as User | undefined) {
-                token.role = user.role;
                 token.id = user.id;
             }
             return token;
         },
         session({ session, token }) {
-            if (token.role && token.id) {
-                session.user.role = token.role as "athlete" | "representative" | "admin";
-                session.user.id = token.id as string;
+            if (token.id) {
+                session.user.id = token.id;
             }
             return session;
         },

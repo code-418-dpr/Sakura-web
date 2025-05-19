@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import Loading from "@/app/loading";
+import { AuthProvider } from "@/components/auth-provider";
 import { Providers } from "@/components/providres";
 
 import "../globals.css";
@@ -29,9 +30,11 @@ export default function RootLayout({
                 <link rel="icon" href="/favicon.ico" />
             </head>
             <body className={inter.className}>
-                <Suspense fallback={<Loading />}>
-                    <Providers>{children}</Providers>
-                </Suspense>
+                <AuthProvider>
+                    <Suspense fallback={<Loading />}>
+                        <Providers>{children}</Providers>
+                    </Suspense>
+                </AuthProvider>
             </body>
         </html>
     );

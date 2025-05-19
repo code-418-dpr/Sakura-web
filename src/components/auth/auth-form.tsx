@@ -3,8 +3,9 @@
 import React from "react";
 
 import LoginForm from "@/components/auth/login-form";
-import RegistrationFrom from "@/components/auth/registration-from";
 import { Tab, Tabs } from "@heroui/react";
+
+import RegistrationFrom from "./registration-form";
 
 export default function AuthForm() {
     return (

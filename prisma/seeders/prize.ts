@@ -7,7 +7,7 @@ const PRIZES: Prisma.PrizeUncheckedCreateInput[] = [];
 const lotteries = await getLotteryAll();
 for (const lottery of lotteries) {
     PRIZES.push({
-        title: `Праз ${lotteries.length + 1}`,
+        title: `Праз ${lottery.id}`,
         lotteryId: lottery.id,
         moneyPrice: Math.floor(Math.random() * 1000 + 500),
         pointsPrice: Math.floor(Math.random() * 1000 + 500),

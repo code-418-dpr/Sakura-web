@@ -1,23 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 
 import LotteryCreateForm from "@/app/admin/_components/lotteries/lottery-create-form";
-import LotteriesView from "@/components/lotteries-view";
+import LotteriesView from "@/components/lotteries/lotteries-view";
 import ModalOrDrawer from "@/components/modal-or-drawer";
-import { PageTab } from "@/types/tabs";
 import { Button, useDisclosure } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 export default function LotteriesTab() {
-    const [activeTab, setActiveTab] = useState<PageTab>("main");
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     return (
         <>
             <div className="flex min-h-[100vh] w-full">
                 <div className="flex-1 p-4">
-                    <LotteriesView activeTab={activeTab} setActiveTabAction={setActiveTab} />
+                    <LotteriesView />
                     <div>
                         <div className="absolute">
                             <Button

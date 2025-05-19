@@ -48,8 +48,8 @@ export async function searchLotteries(params: SearchLotteriesParams) {
                           ],
                       }
                     : {},
-                start ? { start: { lte: start } } : {},
-                end ? { end: { gte: end } } : {},
+                start ? { start: { gte: start } } : {}, // Лотереи, которые закончились после начала диапазона
+                end ? { end: { lte: end } } : {},
                 isVip ? { participantsCount: 0 } : {},
                 isReal ? { isReal: { equals: isReal } } : {},
                 ticketPrice ? { ticketPrice: { equals: ticketPrice } } : {},
@@ -90,7 +90,7 @@ export const createLottery = async (
     vipDiscount: number,
     start: Date,
     end: Date,
-    rules: string
+    rules: string,
 ) => {
     return prisma.lottery.create({
         data: {

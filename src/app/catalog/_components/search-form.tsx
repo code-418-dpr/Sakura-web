@@ -54,7 +54,7 @@ export function SearchForm({ onSubmit }: SearchFormProps) {
             minTicketPrice,
             maxTicketPrice,
         };
-
+        console.log(params);
         onSubmit(params);
         setIsLoading(false);
     };

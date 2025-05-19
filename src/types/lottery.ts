@@ -2,7 +2,8 @@ export interface Lottery {
     id: string;
     title: string;
     description: string;
-    type: "REAL" | "VIRTUAL";
+    type: string;
+    image: string | null;
     participantsCount: number;
     vipParticipantsCount: number;
     winnersCount: number;
@@ -12,4 +13,5 @@ export interface Lottery {
     start: Date;
     end: Date;
     rules: string;
+    isReal?: boolean;
 }

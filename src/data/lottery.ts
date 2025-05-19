@@ -12,11 +12,25 @@ interface SearchLotteriesParams {
     ticketPrice?: number;
     minTicketPrice?: number;
     maxTicketPrice?: number;
+    page?: number;
+    pageSize?: number;
 }
 
 export async function searchLotteries(params: SearchLotteriesParams) {
-    const { query, prizeType, start, end, isVip, isReal, ticketPrice, minTicketPrice, maxTicketPrice } = params;
-    return prisma.lottery.findMany({
+    const {
+        query,
+        prizeType,
+        start,
+        end,
+        isVip,
+        isReal,
+        ticketPrice,
+        minTicketPrice,
+        maxTicketPrice,
+        page = 1,
+        pageSize = 9,
+    } = params;
+    const response = await prisma.lottery.findMany({
         where: {
             AND: [
                 prizeType
@@ -43,7 +57,21 @@ export async function searchLotteries(params: SearchLotteriesParams) {
                 maxTicketPrice ? { ticketPrice: { lte: maxTicketPrice } } : {},
             ],
         },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
     });
+    const total = response.length;
+    return {
+        items: response.map((lottery) => ({
+            ...lottery,
+            type: lottery.isReal ? "REAL" : "VIRTUAL",
+            image: lottery.image ? Buffer.from(lottery.image).toString("base64") : null,
+        })),
+        total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize),
+    };
 }
 
 export const getLotteryByTitle = async (title: string) => {

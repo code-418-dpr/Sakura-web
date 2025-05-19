@@ -21,7 +21,7 @@ export default function LotteriesTab() {
     const [lotteriesData, setLotteriesData] = useState<Paged<LotteryItem> | null>(null);
     const [page, setPage] = useState(1);
 
-    const perPage = 8;
+    const perPage = 9;
 
     useEffect(() => {
         setLotteriesData({

@@ -1,21 +1,25 @@
 // src/app/page.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import BackgroundPetals from "@/components/Landing/background-petals";
-import NavbarElement from "@/components/Navbar/navbar";
-import { SectionScrollSnap } from "@/components/Landing/section-scroll-snap";
-import Hero from "@/components/Landing/hero";
-import WinnersSection from "@/components/Landing/winners-section";
-import TestimonialsSection from "@/components/Landing/testimonials-section";
-import FaqSection from "@/components/Landing/faq-section";
+
+import React, { useEffect, useState } from "react";
+
 import FooterElement from "@/components/Footer/footer";
-import { Tab } from "@/types/tabs";
+import BackgroundPetals from "@/components/Landing/background-petals";
+import FaqSection from "@/components/Landing/faq-section";
+import Hero from "@/components/Landing/hero";
+import { SectionScrollSnap } from "@/components/Landing/section-scroll-snap";
+import TestimonialsSection from "@/components/Landing/testimonials-section";
+import WinnersSection from "@/components/Landing/winners-section";
+import NavbarElement from "@/components/Navbar/navbar";
+import { PageTab } from "@/types/tabs";
 import { Image } from "@heroui/react";
 
+// src/app/page.tsx
+
 export default function Home() {
-    const [activeTab, setActiveTab] = useState<Tab>("main");
+    const [activeTab, setActiveTab] = useState<PageTab>("main");
     const [showNavbar, setShowNavbar] = useState(false);
 
     useEffect(() => {
@@ -24,7 +28,9 @@ export default function Home() {
         };
         handleScroll();
         window.addEventListener("scroll", handleScroll);
-        return () => { window.removeEventListener("scroll", handleScroll); };
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
     }, []);
 
     return (
@@ -39,10 +45,7 @@ export default function Home() {
                 transition={{ duration: 0.5, ease: "easeInOut" }}
                 className="fixed top-0 left-0 z-50 w-full"
             >
-                <NavbarElement
-                    activeTab={activeTab}
-                    setActiveTabAction={setActiveTab}
-                />
+                <NavbarElement activeTab={activeTab} setActiveTabAction={setActiveTab} />
             </motion.div>
 
             {/* Баннер */}
@@ -64,25 +67,15 @@ export default function Home() {
                                 ease: "easeInOut",
                             }}
                         >
-                            <Image
-                                alt="Hero Image"
-                                src="sakura.webp"
-                                className="w-full max-w-xs md:max-w-full"
-                            />
+                            <Image alt="Hero Image" src="sakura.webp" className="w-full max-w-xs md:max-w-full" />
                         </motion.div>
 
                         <div className="flex w-full flex-col items-center text-center md:w-[40%]">
-                            <Image
-                                alt="Sakura Logo"
-                                src="sakura.png"
-                                className="mb-4 h-auto w-32 md:w-40 lg:w-48"
-                            />
+                            <Image alt="Sakura Logo" src="sakura.png" className="mb-4 h-auto w-32 md:w-40 lg:w-48" />
                             <h1 className="from-primary-500 via-primary-400 to-secondary-500 bg-gradient-to-r bg-clip-text text-4xl font-bold text-transparent md:text-5xl lg:text-6xl">
                                 SAKURA
                             </h1>
-                            <p className="text-base text-gray-500 md:text-lg">
-                                Больше, чем просто лото
-                            </p>
+                            <p className="text-base text-gray-500 md:text-lg">Больше, чем просто лото</p>
                         </div>
 
                         <motion.div

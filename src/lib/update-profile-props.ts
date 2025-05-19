@@ -3,4 +3,5 @@ export interface UpdateProfileProps {
     lastname: string | undefined;
     patronymic: string | undefined;
     phone: string | undefined;
+    email: string | undefined;
 }

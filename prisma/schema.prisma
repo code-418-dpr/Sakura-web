@@ -110,14 +110,6 @@ model Prize {
   lottery Lottery @relation(fields: [lotteryId], references: [id])
 }
 
-// model Achievement {
-//   id          String @id @default(uuid())
-//   title       String
-//   image       Bytes? @db.ByteA
-//   description String
-//   // TODO событие по наступлению которого достижение присваивается пользователю
-// }
-
 model DepositTransaction {
   id          String   @id @default(uuid())
   depositTime DateTime
@@ -158,18 +150,26 @@ model ChatMessage {
   user User @relation(fields: [userId], references: [id])
 }
 
-model Mission {
-  id String @id @default(uuid())
-}
+// model Achievement {
+//   id          String @id @default(uuid())
+//   title       String
+//   image       Bytes? @db.ByteA
+//   description String
+//   // TODO событие по наступлению которого достижение присваивается пользователю
+// }
 
-enum ActionType {
-  BUY_TICKET // Купить лотерею
-  PARTICIPATE_IN_LOTTERY // Участвовать в лотереи
-}
+// model Mission {
+//   id String @id @default(uuid())
+// }
 
-model Action {
-  id     String @id @default(uuid())
-  userId String
+// enum ActionType {
+//   BUY_TICKET // Купить лотерею
+//   PARTICIPATE_IN_LOTTERY // Участвовать в лотереи
+// }
 
-  user User @relation(fields: [userId], references: [id])
-}
+// model Action {
+//   id     String @id @default(uuid())
+//   userId String
+
+//   user User @relation(fields: [userId], references: [id])
+// }

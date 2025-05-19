@@ -55,12 +55,17 @@ export const authOptions: NextAuthOptions = {
             }
             return token;
         },
-        session({ session, token }) {
+        async session({ session, token }) {
+            // Получаем актуальные данные из базы
+            const dbUser = await prisma.user.findUnique({
+                where: { id: token.sub },
+                select: { realBalance: true, virtualBalance: true },
+            });
             session.user.id = token.id;
             session.user.role = token.role as UserRole;
             session.user.name = token.name;
-            session.user.realBalance = token.realBalance;
-            session.user.virtualBalance = token.virtualBalance;
+            session.user.realBalance = dbUser?.realBalance.toString() ?? token.realBalance;
+            session.user.virtualBalance = dbUser?.virtualBalance.toString() ?? token.virtualBalance;
             return session;
         },
         redirect({ url, baseUrl }) {

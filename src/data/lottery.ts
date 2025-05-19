@@ -74,13 +74,22 @@ export async function searchLotteries(params: SearchLotteriesParams) {
     };
 }
 
+export const getLotteryById = async (id: string) => {
+    const response = await prisma.lottery.findUnique({ where: { id: id }, include: { prizes: true } });
+    return {
+        ...response,
+        type: response?.isReal ? "REAL" : "VIRTUAL",
+        image: response?.image ? Buffer.from(response.image).toString("base64") : null,
+    };
+};
+
 export const getLotteryByTitle = async (title: string) => {
     return prisma.lottery.findFirst({ where: { title: { equals: title } } });
 };
 
 export const getLotteryAll = async () => {
     return prisma.lottery.findMany({});
-}
+};
 
 export const createLottery = async (
     title: string,

@@ -10,6 +10,8 @@ import { Lottery } from "@/types/lottery";
 import { Card, CardBody, Image, useDisclosure } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
+import LotteryDetails from "./lotteries-details";
+
 interface Props {
     paginatedData: Lottery[];
 }
@@ -26,8 +28,13 @@ export default function LotteriesCards({ paginatedData }: Props) {
     return (
         <>
             {selected && (
-                <ModalOrDrawer label="Лотерея" isOpen={isOpen} onOpenChangeAction={onOpenChange} size="3xl">
-                    <p>Подробности пока не доступны</p>
+                <ModalOrDrawer
+                    label="Подробная информация"
+                    isOpen={isOpen}
+                    onOpenChangeAction={onOpenChange}
+                    size="3xl"
+                >
+                    <LotteryDetails loteryId={selected} />
                 </ModalOrDrawer>
             )}
             {paginatedData.map((e) => {

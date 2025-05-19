@@ -17,3 +17,13 @@ export const createUser = async (name: string, email: string, password: string, 
     const hashedPassword = await bcrypt.hash(password, 10);
     return db.user.create({ data: { name, email, password: hashedPassword, role } });
 };
+
+export const updateUser = async (id: string, realBalance: number, virtualBalance: number) => {
+    return db.user.update({
+        where: { id: id },
+        data: {
+            realBalance: BigInt(Math.round(realBalance)),
+            virtualBalance: BigInt(Math.round(virtualBalance)),
+        },
+    });
+};

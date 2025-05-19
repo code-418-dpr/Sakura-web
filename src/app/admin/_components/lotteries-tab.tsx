@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import LotteriesCards from "@/app/admin/_components/lotteries-cards";
 import { MainCards } from "@/components/main-cards";
-import { LotteryItem } from "@/types/LotteryItem";
+import { LotteryItem } from "@/types/lottery-item";
 
 interface Paged<T> {
     items: T[];

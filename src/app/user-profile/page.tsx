@@ -28,7 +28,7 @@ export default function UserProfilePage() {
         firstName: "Вадим",
         lastname: "Якубенко",
         patronymic: "Виталиевич",
-        isVip: true,
+        isVip: false,
     };
     /*
     const [isLoading, setIsLoading] = useState(true);
@@ -76,10 +76,14 @@ export default function UserProfilePage() {
                                         </h2>
                                     )}
                                     <p className="text-muted-foreground pt-2 text-sm">@{fullUser.userName}</p>
-                                    {fullUser.isVip && (
+                                    {fullUser.isVip ? (
                                         <Chip className="mt-2" color="warning">
                                             VIP статус
                                         </Chip>
+                                    ) : (
+                                        <Button className="mt-2" size="md" color="warning">
+                                            Купить VIP статус
+                                        </Button>
                                     )}
                                 </div>
                                 <Button

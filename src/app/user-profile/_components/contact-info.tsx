@@ -18,7 +18,7 @@ export function ContactInfo({ user }: PersonalInfoProps) {
                         <p className="text-sm text-white/60">Номер телефона</p>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Icon icon="luicide:phone" className="text-muted-foreground h-4 w-4" />
+                        <Icon icon="ic:outline-phone" className="text-muted-foreground h-4 w-4" />
                         <p className="text-medium font-medium text-white">{user.phone}</p>
                     </div>
                 </div>

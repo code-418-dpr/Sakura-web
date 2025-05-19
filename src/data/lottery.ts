@@ -82,6 +82,19 @@ export const getLotteryAll = async () => {
     return prisma.lottery.findMany({});
 }
 
+export const getLotteryPrice = async (id: string) => {
+    const lottery = await prisma.lottery.findFirst({ 
+        where: { id: { equals: id } }, 
+        select: { ticketPrice: true, vipDiscount: true } });
+    if (!lottery) {
+        throw new Error("Lottery not found");
+    }
+    return {
+        ticketPrice: lottery.ticketPrice,
+        primeTicketPrice: lottery.ticketPrice * lottery.vipDiscount,
+    };
+}
+
 export const createLottery = async (
     title: string,
     description: string,

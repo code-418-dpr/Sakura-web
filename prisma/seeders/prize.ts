@@ -6,13 +6,16 @@ const PRIZES: Prisma.PrizeUncheckedCreateInput[] = [];
 
 const lotteries = await getLotteryAll();
 for (const lottery of lotteries) {
-    PRIZES.push({
-        title: `Праз ${lotteries.length + 1}`,
-        lotteryId: lottery.id,
-        moneyPrice: Math.floor(Math.random() * 1000 + 500),
-        pointsPrice: Math.floor(Math.random() * 1000 + 500),
-        count: Math.floor(Math.random() * 10 + 1),
-    });
+    const count = Math.floor(Math.random() * 3 + 1);
+    for (let i = 0; i < count; i++) {
+        PRIZES.push({
+            title: `Праз ${lottery.id}.${i + 1}`,
+            lotteryId: lottery.id,
+            moneyPrice: Math.floor(Math.random() * 1000 + 500),
+            pointsPrice: Math.floor(Math.random() * 1000 + 500),
+            count: Math.floor(Math.random() * 10 + 1),
+        });
+    }
 }
 
 export async function seedPrizes() {

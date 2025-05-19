@@ -1,24 +1,15 @@
-// src/components/Landing/hero.tsx
 "use client";
 
-import { motion } from "framer-motion";
-
 import React from "react";
-
 import Image from "next/image";
-
 import { Button } from "@heroui/react";
+import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
-
 import { heroData } from "../../mocks/hero-data";
-
-// src/components/Landing/hero.tsx
-
-// src/components/Landing/hero.tsx
 
 const Hero: React.FC = () => {
     return (
-        <section className="relative overflow-hidden py-20">
+        <section className="relative py-20 overflow-hidden">
             <motion.div
                 initial="hidden"
                 animate="visible"
@@ -29,9 +20,9 @@ const Hero: React.FC = () => {
                         transition: { duration: 2, ease: "easeInOut" },
                     },
                 }}
-                className="pointer-events-none absolute inset-0 z-[-1]"
+                className="absolute inset-0 pointer-events-none z-[-1]"
             >
-                {/* плавный градиент: α 0.1 → 0.3 → 0.1 */}
+                {/* плавный градиент: α 0 → 0.3 → 0 */}
                 <div
                     className="absolute inset-0"
                     style={{
@@ -42,18 +33,20 @@ const Hero: React.FC = () => {
             </motion.div>
 
             <div className="container mx-auto px-6">
-                <div className="flex flex-col items-center justify-between gap-12 md:flex-row">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-12">
                     <motion.div
-                        className="text-center md:w-1/2 md:text-left"
+                        className="md:w-1/2 text-center md:text-left"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                        <h1 className="from-primary-500 via-primary-400 to-secondary-500 mb-6 bg-gradient-to-r bg-clip-text text-4xl font-bold text-transparent md:text-5xl lg:text-6xl">
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-primary-500 via-primary-400 to-secondary-500 bg-clip-text text-transparent">
                             {heroData.title}
                         </h1>
-                        <p className="text-foreground-600 mb-8 text-lg md:text-xl">{heroData.description}</p>
-                        <div className="flex flex-col justify-center gap-4 sm:flex-row md:justify-start">
+                        <p className="text-lg md:text-xl mb-8 text-foreground-600">
+                            {heroData.description}
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                             <Button
                                 color="primary"
                                 size="lg"
@@ -77,7 +70,7 @@ const Hero: React.FC = () => {
                     </motion.div>
 
                     <motion.div
-                        className="flex justify-center md:w-1/2"
+                        className="md:w-1/2 flex justify-center"
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{
@@ -106,12 +99,12 @@ const Hero: React.FC = () => {
                                     width={600}
                                     height={600}
                                     unoptimized
-                                    className="relative top-[-20px] h-auto max-w-full rounded-2xl shadow-xl"
+                                    className="relative top-[-20px] max-w-full h-auto rounded-2xl shadow-xl"
                                 />
                             </motion.div>
 
                             <motion.div
-                                className="absolute right-0 -bottom-6 left-0 mx-auto h-12 w-4/5 rounded-full bg-black/20 blur-xl"
+                                className="absolute -bottom-6 left-0 right-0 mx-auto w-4/5 h-12 bg-black/20 rounded-full blur-xl"
                                 animate={{
                                     scaleX: [1, 1.1, 1],
                                     opacity: [0.3, 0.5, 0.3],

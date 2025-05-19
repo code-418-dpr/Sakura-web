@@ -38,7 +38,7 @@ export function SearchCardOrDrawer({ children, title }: Props) {
 
 function SearchCard({ children, title }: Props) {
     return (
-        <div className="w-full p-2 sm:w-1/4">
+        <div className="mt-6 w-full p-2 sm:w-1/4">
             <Card className="sticky top-20">
                 <CardHeader className="text-xl">{title}</CardHeader>
                 <CardBody>

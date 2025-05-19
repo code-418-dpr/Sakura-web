@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+import { UserRole } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
@@ -15,51 +16,30 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials) {
                 try {
-                    if (!credentials?.email || !credentials.password) return null;
-
-                    if (
-                        credentials.email === process.env.ADMIN_EMAIL &&
-                        credentials.password === process.env.ADMIN_PASSWORD
-                    ) {
-                        return {
-                            id: "admin-id",
-                            email: process.env.ADMIN_EMAIL,
-                            name: "Федерация",
-                            role: "admin",
-                        };
+                    if (!credentials?.email || !credentials.password) {
+                        console.log("Нет email или пароля");
+                        return null;
                     }
 
                     const user = await prisma.user.findUnique({
                         where: { email: credentials.email },
-                        include: {
-                            athlete: true,
-                            representative: true,
-                        },
                     });
 
                     if (!user || !(await bcrypt.compare(credentials.password, user.password))) {
-                        throw new Error("Неверный email или пароль");
+                        return null;
                     }
-                    if (user.representative.length > 0) {
-                        const representative = user.representative[0];
-                        if (representative.requestStatus === "PENDING") {
-                            throw new Error("Ваша заявка на представительство находится на рассмотрении.");
-                        } else if (representative.requestStatus === "DECLINED") {
-                            throw new Error("Ваша заявка на представительство отклонена.");
-                        }
-                    }
-                    let role: "athlete" | "representative" = "athlete";
-                    if (user.representative.length > 0) role = "representative";
 
                     return {
                         id: user.id,
+                        name: user.name,
                         email: user.email,
-                        name: `${user.firstname} ${user.lastname}`,
-                        role,
+                        role: user.role,
+                        realBalance: String(user.realBalance),
+                        virtualBalance: String(user.virtualBalance),
                     };
                 } catch (error) {
                     console.error("Auth error:", error);
-                    throw error;
+                    return null;
                 }
             },
         }),
@@ -67,16 +47,20 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         jwt({ token, user }) {
             if (user as User | undefined) {
-                token.role = user.role;
                 token.id = user.id;
+                token.name = user.name;
+                token.role = user.role as UserRole;
+                token.realBalance = user.realBalance;
+                token.virtualBalance = user.virtualBalance;
             }
             return token;
         },
         session({ session, token }) {
-            if (token.role && token.id) {
-                session.user.role = token.role as "athlete" | "representative" | "admin";
-                session.user.id = token.id as string;
-            }
+            session.user.id = token.id;
+            session.user.role = token.role as UserRole;
+            session.user.name = token.name;
+            session.user.realBalance = token.realBalance;
+            session.user.virtualBalance = token.virtualBalance;
             return session;
         },
         redirect({ url, baseUrl }) {
@@ -90,5 +74,5 @@ export const authOptions: NextAuthOptions = {
         signIn: "/login",
         error: "/auth/error",
     },
-    secret: process.env.AUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET,
 };

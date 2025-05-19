@@ -5,8 +5,12 @@ import { z } from "zod";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 // import { register } from "@/api/accounts";
 import PasswordInput from "@/components/password-input";
+import { createUser } from "@/data/user";
 // import { RegisterProps } from "@/models/requests/RegisterProps";
 import { baseRegistrationSchema } from "@/schemas/base-registration-schema";
 import { Alert, Button, Input } from "@heroui/react";
@@ -31,7 +35,7 @@ export default function UserForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const [, setMessageType] = useState<"success" | "error" | null>(null);
-
+    const router = useRouter();
     const {
         register: registerValidator,
         handleSubmit,
@@ -60,20 +64,18 @@ export default function UserForm() {
 
             await new Promise((resolve) => setTimeout(resolve, 500));
 
-            /* const response = await register(registerData);
+            await createUser(data.nickname, data.email, data.password);
+            const result = await signIn("credentials", {
+                redirect: false,
+                email: data.email,
+                password: data.password,
+            });
 
-            if (!response.data.result) {
-                setMessage(response.data.errors.map((e) => e.errorMessage).join(",") || "Ошибка регистрации");
-                setMessageType("error");
-            } else {
-                addToast({
-                    title: "Подтверждение почты",
-                    description: "Мы отправили Вам письмо с подтверждением на почту",
-                    color: "success",
-                    timeout: 5000,
-                    shouldShowTimeoutProgress: true,
-                });
-            }*/
+            if (result?.error) {
+                throw new Error(result.error);
+            }
+            router.push("/");
+            router.refresh();
         } catch (error) {
             console.log(error);
             setMessage("Не получилось");

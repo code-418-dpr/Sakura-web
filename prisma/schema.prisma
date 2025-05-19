@@ -14,15 +14,34 @@ enum UserRole {
   USER
 }
 
+model UserLevel {
+  id    String @id @default(uuid())
+  title String
+  score BigInt
+}
+
 model User {
-  id            String    @id @default(uuid())
-  name          String
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  password      String
-  role          UserRole  @default(USER)
-  accounts      Account[]
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  emailVerified  DateTime?
+  phone          String?
+  image          String?
+  password       String
+  role           UserRole  @default(USER)
+  vipDatetime    DateTime?
+  inviterId      String?
+  realBalance    BigInt    @default(0)
+  virtualBalance BigInt    @default(0)
+  score          BigInt    @default(0)
+  lastActivity   DateTime  @default(now())
+
+  accounts            Account[]
+  tickets             Ticket[]
+  depositTransactions DepositTransaction[]
+  notifications       Notification[]
+  messages            ChatMessage[]
+  // actions             Action[]
 }
 
 model Account {
@@ -43,3 +62,111 @@ model Account {
 
   @@unique([provider, providerAccountId])
 }
+
+model Ticket {
+  number    Int    @id @default(autoincrement())
+  userId    String
+  lotteryId String
+  place     Int?   @db.SmallInt
+  price     Float
+
+  user    User    @relation(fields: [userId], references: [id])
+  lottery Lottery @relation(fields: [lotteryId], references: [id])
+
+  @@unique([number, userId, lotteryId])
+}
+
+model Lottery {
+  id                   String   @id @default(uuid())
+  title                String
+  description          String
+  isReal               Boolean
+  image                Bytes?   @db.ByteA
+  participantsCount    Int
+  vipParticipantsCount Int      @db.SmallInt
+  winnersCount         Int
+  primeWinnersCount    Int      @db.SmallInt
+  ticketPrice          Float
+  vipDiscount          Int      @db.SmallInt
+  start                DateTime
+  end                  DateTime
+  rules                String
+
+  tickets Ticket[]
+  prizes  Prize[]
+}
+
+model Prize {
+  id          String  @id @default(uuid())
+  title       String?
+  lotteryId   String
+  moneyPrice  Float
+  pointsPrice Float
+  count       Int     @db.SmallInt
+
+  lottery Lottery @relation(fields: [lotteryId], references: [id])
+}
+
+model DepositTransaction {
+  id       String   @id @default(uuid())
+  userId   String
+  datetime DateTime
+  sum      Int
+  source   String
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum NotificationType {
+  INFO // Информационные уведомления
+  WARNING // Предупреждения
+  ERROR // Ошибки
+  SUCCESS // Уведомления о успешных действиях
+  RESULT // Уведомления о проведенной лотереи
+}
+
+model Notification {
+  id       String           @id @default(uuid())
+  userId   String
+  type     NotificationType
+  title    String
+  content  String
+  sendTime DateTime         @default(now())
+  isRead   Boolean          @default(false)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model ChatMessage {
+  id          String   @id @default(uuid())
+  userId      String
+  isResponse  Boolean
+  message     String
+  receiveTime DateTime
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// model Achievement {
+//   id          String @id @default(uuid())
+//   title       String
+//   image       Bytes? @db.ByteA
+//   description String
+//   // TODO событие по наступлению которого достижение присваивается пользователю
+// }
+
+// model Mission {
+//   id String @id @default(uuid())
+// }
+
+// enum ActionType {
+//   BUY_TICKET // Купить лотерею
+//   PARTICIPATE_IN_LOTTERY // Участвовать в лотереи
+// }
+
+// model Action {
+//   id     String @id @default(uuid())
+//   userId String
+
+//   user User @relation(fields: [userId], references: [id])
+// }

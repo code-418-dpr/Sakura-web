@@ -22,7 +22,11 @@ model User {
   image         String?
   password      String
   role          UserRole  @default(USER)
-  accounts      Account[]
+  inviterId     String?
+  balance       BigInt
+
+  accounts  Account[]
+  lotteries Lottery[]
 }
 
 model Account {
@@ -42,4 +46,53 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+}
+
+model Ticket {
+  number    Int    @id @default(autoincrement())
+  userId    String
+  lotteryId String
+  place     Int?   @db.SmallInt
+  price     Float
+
+  user    User    @relation(fields: [userId], references: [id])
+  lottery Lottery @relation(fields: [lotteryId], references: [id])
+
+  @@unique([number, userId, lotteryId])
+}
+
+enum LotteryType {
+  REAL
+  VIRTUAL
+}
+
+model Lottery {
+  id                   String      @id @default(uuid())
+  title                String
+  description          String
+  type                 LotteryType
+  image                Bytes?      @db.ByteA
+  participantsCount    Int
+  vipParticipantsCount Int         @db.SmallInt
+  winnersCount         Int
+  primeWinnersCount    Int         @db.SmallInt
+  ticketPrice          Float
+  vipDiscount          Int         @db.SmallInt
+  start                DateTime
+  end                  DateTime
+  rules                String
+
+  tickets Ticket[]
+  prizes  Prize[]
+}
+
+model Prize {
+  id           String  @default(uuid())
+  title        String?
+  lotteryId    String
+  realPrice    Float
+  virtualPrice Float
+  count        Int     @db.SmallInt
+
+  lottery Lottery @relation(fields: [lotteryId], references: [id])
 }

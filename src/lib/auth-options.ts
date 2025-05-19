@@ -34,6 +34,8 @@ export const authOptions: NextAuthOptions = {
                         name: user.name,
                         email: user.email,
                         role: user.role,
+                        realBalance: (user.realBalance).toString(),
+                        virtualBalance: (user.virtualBalance).toString(),
                     };
                 } catch (error) {
                     console.error("Auth error:", error);
@@ -48,6 +50,8 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
                 token.name = user.name;
                 token.role = user.role as UserRole;
+                token.realBalance = user.realBalance;
+                token.virtualBalance = user.virtualBalance;
             }
             return token;
         },
@@ -55,6 +59,8 @@ export const authOptions: NextAuthOptions = {
             session.user.id = token.id;
             session.user.role = token.role as UserRole;
             session.user.name = token.name;
+            session.user.realBalance = token.realBalance;
+            session.user.virtualBalance = token.virtualBalance;
             return session;
         },
         redirect({ url, baseUrl }) {

@@ -7,6 +7,8 @@ declare module "next-auth" {
         name: string;
         role: UserRole;
         id: string;
+        realBalance: string;
+        virtualBalance: string;
     }
 
     interface Session {
@@ -16,6 +18,8 @@ declare module "next-auth" {
             email?: string | null;
             image?: string | null;
             role: UserRole;
+            realBalance: string;
+            virtualBalance: string;
         };
     }
 }
@@ -25,5 +29,7 @@ declare module "next-auth/jwt" {
         id: string;
         role: UserRole;
         name: string;
+        realBalance: string;
+        virtualBalance: string;
     }
 }

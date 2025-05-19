@@ -36,7 +36,7 @@ interface NavbarProps {
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: Tab[] = ["features", "customers", "user-profile"];
+    const tabs: Tab[] = ["features", "customers"];
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { user, isLoading, isAuthenticated } = useAuth();
     const router = useRouter();
@@ -49,7 +49,6 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
             main: "Main",
             features: "Features",
             customers: "Customers",
-            "user-profile": "User Profile",
         } as const;
 
         if (tab in labels) {
@@ -92,7 +91,7 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                         <NavbarItem>
                             <Dropdown shouldBlockScroll={false} showArrow>
                                 <DropdownTrigger>
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex cursor-pointer items-center gap-3">
                                         <Avatar
                                             showFallback
                                             src="https://images.unsplash.com/broken"
@@ -110,7 +109,9 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Profile Actions" variant="flat">
                                     <DropdownSection aria-label="Profile" showDivider>
-                                        <DropdownItem key="profile">Мой профиль</DropdownItem>
+                                        <DropdownItem key="profile">
+                                            <Link href="/user-profile">Мой профиль</Link>
+                                        </DropdownItem>
                                         <DropdownItem key="settings">Настройки</DropdownItem>
                                     </DropdownSection>
                                     <DropdownSection aria-label="Profile" showDivider>

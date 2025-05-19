@@ -91,7 +91,7 @@ export const getLotteryPrice = async (id: string) => {
     }
     return {
         ticketPrice: lottery.ticketPrice,
-        primeTicketPrice: lottery.ticketPrice * lottery.vipDiscount,
+        primeTicketPrice: lottery.ticketPrice * (lottery.vipDiscount / 100),
     };
 }
 

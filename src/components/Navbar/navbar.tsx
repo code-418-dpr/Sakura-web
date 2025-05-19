@@ -90,17 +90,6 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                     ) : isAuthenticated ? (
                         <>
                             <NavbarItem>
-                                <Button
-                                    className="rounded-4xl"
-                                    variant="flat"
-                                    startContent={React.createElement(Icon, {
-                                        icon: "iconoir:bell",
-                                        className: "text-lg",
-                                    })}
-                                    isIconOnly
-                                ></Button>
-                            </NavbarItem>
-                            <NavbarItem>
                                 <Dropdown shouldBlockScroll={false} showArrow>
                                     <DropdownTrigger>
                                         <div className="flex cursor-pointer items-center gap-3">

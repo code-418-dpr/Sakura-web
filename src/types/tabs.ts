@@ -1,4 +1,4 @@
-export type Tab =
+export type PageTab =
     | "main"
     | "features"
     | "customers"

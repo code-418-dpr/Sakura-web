@@ -56,12 +56,10 @@ export default function LotteriesCards({ paginatedData }: Props) {
                                         <p>{e.prize.toLocaleString("ru-RU")} ₽</p>
                                     </div>
                                     <div className="flex items-center pt-2">
-                                        <p className="mx-2 text-sm font-bold">
-                                            Тип проведения:
-                                            <Chip className="mx-2" color={e.isVirtual ? "success" : "danger"}>
-                                                {e.isVirtual ? "Реальная" : "Виртуальная"}
-                                            </Chip>
-                                        </p>
+                                        <p className="mx-2 text-sm font-bold">Тип проведения:</p>
+                                        <Chip className="mx-2" color={e.isVirtual ? "success" : "danger"}>
+                                            {e.isVirtual ? "Реальная" : "Виртуальная"}
+                                        </Chip>
                                     </div>
                                 </div>
                             </CardBody>

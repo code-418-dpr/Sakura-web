@@ -3,7 +3,7 @@
 import React from "react";
 
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useAuth } from "@/hooks/use-auth";
 import { Tab } from "@/types/tabs";
@@ -41,6 +41,8 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { user, isLoading, isAuthenticated } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
+
     const handleNavigation = (e: PressEvent, tab: Tab) => {
         setActiveTabAction(tab);
     };
@@ -74,6 +76,19 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                     <p className="font-bold text-inherit">SAKURA</p>
                 </NavbarBrand>
                 <NavbarContent className="hidden gap-4 sm:flex" justify="center">
+                    {pathname !== "/" && (
+                        <NavbarItem key="main">
+                            <Link
+                                color="foreground"
+                                href="/"
+                                onPressEnd={(e: PressEvent) => {
+                                    handleNavigation(e, "main");
+                                }}
+                            >
+                                Главная
+                            </Link>
+                        </NavbarItem>
+                    )}
                     {tabs.map((tab) => (
                         <NavbarItem key={tab}>
                             <Link

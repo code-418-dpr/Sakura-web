@@ -14,7 +14,6 @@ import {
     Input,
     NumberInput,
 } from "@heroui/react";
-import { Icon } from "@iconify/react/dist/iconify.js";
 import type { Selection } from "@react-types/shared";
 
 interface AwardItem {
@@ -23,7 +22,6 @@ interface AwardItem {
 }
 
 const AWARDS: AwardItem[] = [
-    { key: "DEFAULT", name: "Любой" },
     { key: "MONEY", name: "Денежный приз" },
     { key: "BONUS", name: "Бонусные баллы" },
     { key: "PRODUCT", name: "Товары" },
@@ -47,8 +45,7 @@ export function SearchForm() {
         onSelectionChange: (keys: Selection) => void,
         allowEmpty = false,
     ) => {
-        const selectedName = items.find((i) => i.key === selectedKey)?.name ?? AWARDS[0].name;
-        if (selectedName === "Любой") selectedKey = AWARDS[0].key;
+        const selectedName = items.find((i) => i.key === selectedKey)?.name ?? "Выберите...";
 
         return (
             <div className="mb-4">
@@ -100,7 +97,7 @@ export function SearchForm() {
                         const selectedKey = Array.from(keys)[0] as string | undefined;
                         setSelectedAward(selectedKey);
                     },
-                    false,
+                    true,
                 )}
                 <div>
                     <p className="translate-x-2 text-sm font-medium">Стоимость</p>
@@ -119,7 +116,7 @@ export function SearchForm() {
                 <Button variant="flat" type="reset" className="mr-auto">
                     Сбросить
                 </Button>
-                <Button type="submit" isLoading={isLoading} startContent={<Icon icon="iconoir:search" />}>
+                <Button type="submit" isLoading={isLoading}>
                     Поиск
                 </Button>
             </div>

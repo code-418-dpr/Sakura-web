@@ -37,7 +37,7 @@ export function PersonalInfo({ user }: PersonalInfoProps) {
                     <div className="space-y-1">
                         <p className="text-sm text-white/60">Электронная почта</p>
                         <div className="flex items-center gap-2">
-                            <Icon icon="luicide:mail" className="h-4 w-4 text-white/60" />
+                            <Icon icon="material-symbols:mail-outline" className="h-4 w-4 text-white/60" />
                             <p className="text-medium font-medium text-white">{user.email}</p>
                         </div>
                     </div>

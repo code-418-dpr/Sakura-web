@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import LotteriesTab from "@/app/admin/_components/lotteries-tab";
+import LotteriesTab from "@/app/admin/_components/lotteries/lotteries-tab";
 import UsersTab from "@/app/admin/_components/users-tab";
 import NavbarElement from "@/components/Navbar/navbar";
 import { PageTab } from "@/types/tabs";

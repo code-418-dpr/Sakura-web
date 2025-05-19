@@ -42,7 +42,11 @@ export default function LotteriesCards({ paginatedData }: Props) {
                             }}
                         >
                             <CardBody className="space-y-4">
-                                <Image alt={e.name} src={e.image} className="w-full rounded-xl object-cover" />
+                                <Image
+                                    alt={e.name}
+                                    src="https://avatars.mds.yandex.net/i?id=2a00000196d3064f672cf2fbc01d4b2a4812-1344766-fast-images&n=13"
+                                    className="w-full rounded-xl object-cover"
+                                />
                                 <div className="space-y-2">
                                     <h3 className="text-2xl font-bold">{e.name}</h3>
                                     <div className="flex items-center pt-2">

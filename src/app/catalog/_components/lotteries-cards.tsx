@@ -50,7 +50,7 @@ export default function LotteriesCards({ paginatedData }: Props) {
                             <CardBody className="space-y-4">
                                 <Image
                                     alt={e.title}
-                                    src={e.image ?? "placeholder.jpg"}
+                                    src="https://avatars.mds.yandex.net/i?id=2a00000196d3064f672cf2fbc01d4b2a4812-1344766-fast-images&n=13"
                                     className="w-full rounded-xl object-cover"
                                 />
                                 <div className="space-y-2">

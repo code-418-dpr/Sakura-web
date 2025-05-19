@@ -45,3 +45,39 @@ export async function searchLotteries(params: SearchLotteriesParams) {
         },
     });
 }
+
+export const getLotteryByTitle = async (title: string) => {
+    return prisma.lottery.findFirst({ where: { title: { equals: title } } });
+};
+
+export const createLottery = async (
+    title: string,
+    description: string,
+    isReal: boolean,
+    participantsCount: number,
+    vipParticipantsCount: number,
+    winnersCount: number,
+    primeWinnersCount: number,
+    ticketPrice: number,
+    vipDiscount: number,
+    start: Date,
+    end: Date,
+    rules: string
+) => {
+    return prisma.lottery.create({
+        data: {
+            title,
+            description,
+            isReal,
+            participantsCount,
+            vipParticipantsCount,
+            winnersCount,
+            primeWinnersCount,
+            ticketPrice,
+            vipDiscount,
+            start,
+            end,
+            rules,
+        },
+    });
+};

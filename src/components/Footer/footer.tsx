@@ -169,7 +169,7 @@ const Footer: React.FC = () => {
                                 radius="full"
                                 className="from-primary-500 to-secondary-500 w-full bg-gradient-to-r"
                             >
-                                Subscribe
+                                Подписаться
                             </Button>
                         </div>
 

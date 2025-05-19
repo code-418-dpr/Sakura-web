@@ -3,7 +3,7 @@
 
 import { motion } from "framer-motion";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import FooterElement from "@/components/Footer/footer";
 import BackgroundPetals from "@/components/Landing/background-petals";
@@ -18,22 +18,9 @@ import { Image } from "@heroui/react";
 
 // src/app/page.tsx
 
-// src/app/page.tsx
-
 export default function Home() {
     const [activeTab, setActiveTab] = useState<PageTab>("main");
-    const [showNavbar, setShowNavbar] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setShowNavbar(window.scrollY > window.innerHeight / 1.2);
-        };
-        handleScroll();
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
+    const [showNavbar] = useState(true);
 
     return (
         <div className="relative">

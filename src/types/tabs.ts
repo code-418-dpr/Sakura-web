@@ -1,1 +1,1 @@
-export type Tab = "main" | "features" | "customers" | "user-profile" | "catalog";
+export type PageTab = "main" | "features" | "customers" | "user-profile";

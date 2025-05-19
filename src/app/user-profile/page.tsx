@@ -8,7 +8,7 @@ import { ProfileTabs } from "@/app/user-profile/_components/profile-tabs";
 import NavbarElement from "@/components/Navbar/navbar";
 import ModalOrDrawer from "@/components/modal-or-drawer";
 import { useAuth } from "@/hooks/use-auth";
-import { Tab } from "@/types/tabs";
+import { PageTab } from "@/types/tabs";
 import { User } from "@/types/user";
 // import { ProfileSkeleton } from "@/app/user-profile/_components/skeleton";
 // import { AuthContext } from "@/hooks/use-auth";
@@ -18,7 +18,7 @@ import { Avatar, Button, useDisclosure } from "@heroui/react";
 
 export default function UserProfilePage() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const [activeTab, setActiveTab] = useState<Tab>("main");
+    const [activeTab, setActiveTab] = useState<PageTab>("main");
     const { user } = useAuth();
     const fullUser: User = {
         id: "1",

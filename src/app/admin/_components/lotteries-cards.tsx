@@ -3,9 +3,9 @@
 import { useState } from "react";
 
 import ModalOrDrawer from "@/components/modal-or-drawer";
-import { LotteryItem } from "@/types/LotteryItem";
+import { LotteryItem } from "@/types/lottery-item";
+import { Chip } from "@heroui/chip";
 import { Card, CardBody, Image, useDisclosure } from "@heroui/react";
-import { Icon } from "@iconify/react";
 
 interface Props {
     paginatedData: LotteryItem[];
@@ -53,15 +53,14 @@ export default function LotteriesCards({ paginatedData }: Props) {
                                     </div>
                                     <div className="flex items-center pt-2">
                                         <p className="mx-2 text-sm font-bold">Призовой фонд: </p>
-                                        <p>{e.prize} ₽</p>
+                                        <p>{e.prize.toLocaleString("ru-RU")} ₽</p>
                                     </div>
                                     <div className="flex items-center pt-2">
-                                        <Icon icon="fluent:animal-cat-16-regular" className="h-5 w-5" />
                                         <p className="mx-2 text-sm font-bold">
                                             Тип проведения:
-                                            <span className="text-foreground/50 m-1">
+                                            <Chip className="mx-2" color={e.isVirtual ? "success" : "danger"}>
                                                 {e.isVirtual ? "Реальная" : "Виртуальная"}
-                                            </span>
+                                            </Chip>
                                         </p>
                                     </div>
                                 </div>

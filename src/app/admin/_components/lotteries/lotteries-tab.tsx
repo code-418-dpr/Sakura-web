@@ -2,9 +2,13 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 
-import LotteriesCards from "@/app/admin/_components/lotteries-cards";
+import LotteriesCards from "@/app/admin/_components/lotteries/lotteries-cards";
+import LotteryCreateForm from "@/app/admin/_components/lotteries/lottery-create-form";
 import { MainCards } from "@/components/main-cards";
+import ModalOrDrawer from "@/components/modal-or-drawer";
 import { LotteryItem } from "@/types/lottery-item";
+import { Button, useDisclosure } from "@heroui/react";
+import { Icon } from "@iconify/react";
 
 interface Paged<T> {
     items: T[];
@@ -20,6 +24,7 @@ export default function LotteriesTab() {
     const [isLoading] = useState(false);
     const [lotteriesData, setLotteriesData] = useState<Paged<LotteryItem> | null>(null);
     const [page, setPage] = useState(1);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const perPage = 9;
 
@@ -65,6 +70,22 @@ export default function LotteriesTab() {
                         setPageAction={setPage}
                         renderCardsAction={(items) => <LotteriesCards paginatedData={items} />}
                     />
+                    <div>
+                        <div className="absolute">
+                            <Button
+                                className="fixed right-5 bottom-5 z-10"
+                                isIconOnly
+                                aria-label="Create"
+                                onPress={onOpen}
+                                size="lg"
+                            >
+                                <Icon icon="iconoir:plus" width={50} height={50} />
+                            </Button>
+                        </div>
+                        <ModalOrDrawer label="Создание лотереи" isOpen={isOpen} onOpenChangeAction={onOpenChange}>
+                            <LotteryCreateForm />
+                        </ModalOrDrawer>
+                    </div>
                 </div>
             </div>
         </>

@@ -3,7 +3,6 @@ export interface Lottery {
     title: string;
     description: string;
     type: "REAL" | "VIRTUAL";
-    image: string | null;
     participantsCount: number;
     vipParticipantsCount: number;
     winnersCount: number;

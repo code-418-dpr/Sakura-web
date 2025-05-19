@@ -1,5 +1,5 @@
 export interface FileData {
     name: string;
-    content: Uint8Array;
+    content: string;
     type: string;
 }

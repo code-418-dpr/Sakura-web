@@ -10,6 +10,5 @@ export interface LotteryRequestData {
     primeWinnersCount: number;
     ticketPrice: number;
     vipDiscount: number;
-    image: string;
     rules: string;
 }

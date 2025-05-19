@@ -103,8 +103,8 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                                         />
 
                                         <div className="flex flex-col text-sm leading-tight">
-                                            <span className="font-medium">{user?.name}</span>
-                                            <span className="text-default-500">{user?.email}</span>
+                                            <span className="text-md font-medium">{user?.name}</span>
+                                            <span className="text-default-600 text-md">Баланс: 00.00 руб.</span>
                                         </div>
                                     </div>
                                 </DropdownTrigger>

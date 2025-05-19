@@ -24,7 +24,7 @@ export function MainCards<T>({
     return (
         <div className="container mx-auto w-full flex-1 px-1 py-8">
             {pageItems.length > 0 ? (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {isLoading ? <CircularProgress aria-label="Loading..." size="lg" /> : renderCardsAction(pageItems)}
                 </div>
             ) : (

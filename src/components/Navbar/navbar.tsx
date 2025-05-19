@@ -3,10 +3,10 @@
 import React from "react";
 
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useAuth } from "@/hooks/use-auth";
-import { Tab } from "@/types/tabs";
+import { PageTab } from "@/types/tabs";
 import {
     Avatar,
     Button,
@@ -32,23 +32,24 @@ import ModalOrDrawer from "../modal-or-drawer";
 import { ThemeSwitcher } from "../theme-switcher";
 
 interface NavbarProps {
-    activeTab: Tab;
-    setActiveTabAction: React.Dispatch<React.SetStateAction<Tab>>;
+    activeTab: PageTab;
+    setActiveTabAction: React.Dispatch<React.SetStateAction<PageTab>>;
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: Tab[] = ["catalog"];
+    const tabs: PageTab[] = ["catalog"];
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { user, isLoading, isAuthenticated } = useAuth();
     const router = useRouter();
-    const handleNavigation = (e: PressEvent, tab: Tab) => {
+    const pathname = usePathname();
+
+    const handleNavigation = (e: PressEvent, tab: PageTab) => {
         setActiveTabAction(tab);
     };
 
-    const getTabLabel = (tab: Tab): string => {
+    const getTabLabel = (tab: PageTab): string => {
         const labels = {
             catalog: "Каталог",
-            main: "Main",
         } as const;
 
         if (tab in labels) {
@@ -69,6 +70,19 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                     <p className="font-bold text-inherit">SAKURA</p>
                 </NavbarBrand>
                 <NavbarContent className="hidden gap-4 sm:flex" justify="center">
+                    {pathname !== "/" && (
+                        <NavbarItem key="main">
+                            <Link
+                                color="foreground"
+                                href="/"
+                                onPressEnd={(e: PressEvent) => {
+                                    handleNavigation(e, "main");
+                                }}
+                            >
+                                Главная
+                            </Link>
+                        </NavbarItem>
+                    )}
                     {tabs.map((tab) => (
                         <NavbarItem key={tab}>
                             <Link

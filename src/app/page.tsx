@@ -7,11 +7,11 @@ import { useState } from "react";
 import FooterElement from "@/components/Footer/footer";
 import NavbarElement from "@/components/Navbar/navbar";
 import { useAuth } from "@/hooks/use-auth";
-import { Tab } from "@/types/tabs";
+import { PageTab } from "@/types/tabs";
 import { Image } from "@heroui/react";
 
 export default function Home() {
-    const [activeTab, setActiveTab] = useState<Tab>("main");
+    const [activeTab, setActiveTab] = useState<PageTab>("main");
     const { user } = useAuth();
 
     console.log(user);

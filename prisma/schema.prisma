@@ -26,6 +26,7 @@ model User {
   balance       BigInt
 
   accounts Account[]
+  tickets  Ticket[]
 }
 
 model Account {

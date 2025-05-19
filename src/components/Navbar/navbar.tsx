@@ -2,9 +2,19 @@
 
 import React from "react";
 
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/hooks/use-auth";
 import { Tab } from "@/types/tabs";
 import {
+    Avatar,
     Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownSection,
+    DropdownTrigger,
     Image,
     Link,
     Navbar,
@@ -12,6 +22,7 @@ import {
     NavbarContent,
     NavbarItem,
     PressEvent,
+    Spinner,
     useDisclosure,
 } from "@heroui/react";
 
@@ -25,8 +36,10 @@ interface NavbarProps {
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: Tab[] = ["features", "customers", "integrations"];
+    const tabs: Tab[] = ["features", "customers", "user-profile"];
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { user, isLoading, isAuthenticated } = useAuth();
+    const router = useRouter();
     const handleNavigation = (e: PressEvent, tab: Tab) => {
         setActiveTabAction(tab);
     };
@@ -44,7 +57,11 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
         }
         return tab.toString();
     };
-
+    const handleLogout = async () => {
+        await signOut({ redirect: false });
+        router.push("/");
+        router.refresh();
+    };
     return (
         <>
             <Navbar>
@@ -69,16 +86,63 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                     ))}
                 </NavbarContent>
                 <NavbarContent justify="end">
-                    <NavbarItem>
-                        <>
-                            <Button color="primary" variant="flat" onPress={onOpen}>
-                                Войти
-                            </Button>
-                            <ModalOrDrawer label="Авторизация" isOpen={isOpen} onOpenChangeAction={onOpenChange}>
-                                <AuthForm />
-                            </ModalOrDrawer>
-                        </>
-                    </NavbarItem>
+                    {isLoading ? (
+                        <Spinner size="sm" />
+                    ) : isAuthenticated ? (
+                        <NavbarItem>
+                            <Dropdown shouldBlockScroll={false} showArrow>
+                                <DropdownTrigger>
+                                    <div className="flex items-center gap-3">
+                                        <Avatar
+                                            showFallback
+                                            src="https://images.unsplash.com/broken"
+                                            isBordered
+                                            color="primary"
+                                            className="text-default-100"
+                                            size="sm"
+                                        />
+
+                                        <div className="flex flex-col text-sm leading-tight">
+                                            <span className="font-medium">{user?.name}</span>
+                                            <span className="text-default-500">{user?.email}</span>
+                                        </div>
+                                    </div>
+                                </DropdownTrigger>
+                                <DropdownMenu aria-label="Profile Actions" variant="flat">
+                                    <DropdownSection aria-label="Profile" showDivider>
+                                        <DropdownItem key="profile">Мой профиль</DropdownItem>
+                                        <DropdownItem key="settings">Настройки</DropdownItem>
+                                    </DropdownSection>
+                                    <DropdownSection aria-label="Profile" showDivider>
+                                        <DropdownItem key="achievments">Достижения</DropdownItem>
+                                        <DropdownItem key="notifications">Уведомления</DropdownItem>
+                                    </DropdownSection>
+                                    <DropdownSection aria-label="Logout">
+                                        <DropdownItem
+                                            key="logout"
+                                            color="danger"
+                                            onPress={() => {
+                                                handleLogout().catch(console.error);
+                                            }}
+                                        >
+                                            Выйти
+                                        </DropdownItem>
+                                    </DropdownSection>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </NavbarItem>
+                    ) : (
+                        <NavbarItem>
+                            <>
+                                <Button color="primary" variant="flat" onPress={onOpen}>
+                                    Войти
+                                </Button>
+                                <ModalOrDrawer label="Авторизация" isOpen={isOpen} onOpenChangeAction={onOpenChange}>
+                                    <AuthForm />
+                                </ModalOrDrawer>
+                            </>
+                        </NavbarItem>
+                    )}
                     <NavbarItem>
                         <ThemeSwitcher />
                     </NavbarItem>

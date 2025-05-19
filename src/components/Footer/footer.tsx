@@ -1,7 +1,10 @@
-import React, { useRef } from "react";
-import { Link, Button, Input, Divider } from "@heroui/react";
 import { motion, useInView } from "framer-motion";
+
+import React, { useRef } from "react";
+
+import { Button, Divider, Input, Link } from "@heroui/react";
 import { Icon } from "@iconify/react";
+
 import { footerData } from "../../mocks/footer-data";
 
 const Footer: React.FC = () => {
@@ -37,7 +40,7 @@ const Footer: React.FC = () => {
     return (
         <footer
             ref={footerRef}
-            className="bg-gradient-to-b from-content1/50 to-content2/50 pt-16 pb-8 border-t border-divider relative overflow-hidden"
+            className="from-content1/50 to-content2/50 border-divider relative overflow-hidden border-t bg-gradient-to-b pt-16 pb-8"
         >
             <motion.div
                 variants={containerVariants}
@@ -45,19 +48,19 @@ const Footer: React.FC = () => {
                 animate={isInView ? "visible" : "hidden"}
                 className="container mx-auto px-6"
             >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                     {/* Brand & Social */}
                     <motion.div variants={itemVariants}>
-                        <div className="flex items-center gap-2 mb-4">
+                        <div className="mb-4 flex items-center gap-2">
                             <Icon
                                 icon="lucide:cherry"
-                                className="text-transparent bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-2xl"
+                                className="from-primary-500 to-secondary-500 bg-gradient-to-r bg-clip-text text-2xl text-transparent"
                             />
                             <h3 className="text-xl font-bold">Sakura Лотерея</h3>
                         </div>
                         <p className="text-foreground-500 mb-6">
-                            Каждый билет превращает мечты в реальность. Играть
-                            ответственным и испытывающим радость победы.
+                            Каждый билет превращает мечты в реальность. Играть ответственным и испытывающим радость
+                            победы.
                         </p>
                         <div className="flex gap-4">
                             {footerData.socialLinks.map((social, idx) => (
@@ -68,7 +71,7 @@ const Footer: React.FC = () => {
                                     rel="noopener noreferrer"
                                     whileHover={{ y: -5, scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
-                                    className="p-2 rounded-full bg-gradient-to-br from-content2 to-content3 hover:from-content3 hover:to-content4 transition-all duration-300"
+                                    className="from-content2 to-content3 hover:from-content3 hover:to-content4 rounded-full bg-gradient-to-br p-2 transition-all duration-300"
                                     aria-label={social.label}
                                 >
                                     <Icon icon={social.icon} className="text-xl" />
@@ -79,7 +82,7 @@ const Footer: React.FC = () => {
 
                     {/* Quick & Legal Links */}
                     <motion.div variants={itemVariants}>
-                        <h3 className="text-lg font-semibold mb-4">Ссылки</h3>
+                        <h3 className="mb-4 text-lg font-semibold">Ссылки</h3>
                         <ul className="space-y-2">
                             {footerData.quickLinks.slice(0, 3).map((link, idx) => (
                                 <li key={idx}>
@@ -88,7 +91,7 @@ const Footer: React.FC = () => {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         color="foreground"
-                                        className="hover:text-transparent hover:bg-gradient-to-r hover:from-primary-500 hover:to-secondary-500 hover:bg-clip-text transition-colors flex items-center gap-1"
+                                        className="hover:from-primary-500 hover:to-secondary-500 flex items-center gap-1 transition-colors hover:bg-gradient-to-r hover:bg-clip-text hover:text-transparent"
                                     >
                                         <Icon icon="lucide:chevron-right" className="text-sm" />
                                         {link.name}
@@ -97,7 +100,7 @@ const Footer: React.FC = () => {
                             ))}
                         </ul>
 
-                        <h3 className="text-lg font-semibold mt-6 mb-4">Юридическая информация</h3>
+                        <h3 className="mt-6 mb-4 text-lg font-semibold">Юридическая информация</h3>
                         <ul className="space-y-2">
                             {footerData.legalLinks.map((link, idx) => (
                                 <li key={idx}>
@@ -106,7 +109,7 @@ const Footer: React.FC = () => {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         color="foreground"
-                                        className="hover:text-transparent hover:bg-gradient-to-r hover:from-primary-500 hover:to-secondary-500 hover:bg-clip-text transition-colors flex items-center gap-1"
+                                        className="hover:from-primary-500 hover:to-secondary-500 flex items-center gap-1 transition-colors hover:bg-gradient-to-r hover:bg-clip-text hover:text-transparent"
                                     >
                                         <Icon icon="lucide:chevron-right" className="text-sm" />
                                         {link.name}
@@ -118,7 +121,7 @@ const Footer: React.FC = () => {
 
                     {/* Resources & Contact */}
                     <motion.div variants={itemVariants}>
-                        <h3 className="text-lg font-semibold mb-4">Ресурсы</h3>
+                        <h3 className="mb-4 text-lg font-semibold">Ресурсы</h3>
                         <ul className="space-y-2">
                             {footerData.resourceLinks.map((link, idx) => (
                                 <li key={idx}>
@@ -127,7 +130,7 @@ const Footer: React.FC = () => {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         color="foreground"
-                                        className="hover:text-transparent hover:bg-gradient-to-r hover:from-primary-500 hover:to-secondary-500 hover:bg-clip-text transition-colors flex items-center gap-1"
+                                        className="hover:from-primary-500 hover:to-secondary-500 flex items-center gap-1 transition-colors hover:bg-gradient-to-r hover:bg-clip-text hover:text-transparent"
                                     >
                                         <Icon icon="lucide:chevron-right" className="text-sm" />
                                         {link.name}
@@ -136,7 +139,7 @@ const Footer: React.FC = () => {
                             ))}
                         </ul>
 
-                        <h3 className="text-lg font-semibold mt-6 mb-4">Контакты</h3>
+                        <h3 className="mt-6 mb-4 text-lg font-semibold">Контакты</h3>
                         <ul className="space-y-3">
                             {footerData.contactInfo.map((item, idx) => (
                                 <li key={idx} className="flex items-start gap-2">
@@ -149,9 +152,7 @@ const Footer: React.FC = () => {
 
                     {/* Subscribe & App Download */}
                     <motion.div variants={itemVariants}>
-                        <h3 className="text-lg font-semibold mb-4">
-                            Подписывайтесь на обновления
-                        </h3>
+                        <h3 className="mb-4 text-lg font-semibold">Подписывайтесь на обновления</h3>
                         <p className="text-foreground-500 mb-4">
                             Будьте в курсе последних розыгрышей, рекламных акций и победителей.
                         </p>
@@ -161,21 +162,19 @@ const Footer: React.FC = () => {
                                 type="email"
                                 variant="bordered"
                                 radius="full"
-                                startContent={
-                                    <Icon icon="lucide:mail" className="text-foreground-400" />
-                                }
+                                startContent={<Icon icon="lucide:mail" className="text-foreground-400" />}
                             />
                             <Button
                                 color="primary"
                                 radius="full"
-                                className="w-full bg-gradient-to-r from-primary-500 to-secondary-500"
+                                className="from-primary-500 to-secondary-500 w-full bg-gradient-to-r"
                             >
                                 Subscribe
                             </Button>
                         </div>
 
                         <div className="mt-6">
-                            <h4 className="font-semibold mb-2">Установите наше приложение</h4>
+                            <h4 className="mb-2 font-semibold">Установите наше приложение</h4>
                             <div className="flex gap-2">
                                 <Button variant="flat" className="flex items-center gap-2" size="sm">
                                     <Icon icon="logos:apple" className="text-xl" />
@@ -200,15 +199,11 @@ const Footer: React.FC = () => {
 
                 <motion.div
                     variants={itemVariants}
-                    className="flex flex-col md:flex-row justify-between items-center gap-4"
+                    className="flex flex-col items-center justify-between gap-4 md:flex-row"
                 >
-                    <div className="flex flex-wrap justify-center md:justify-start gap-4">
+                    <div className="flex flex-wrap justify-center gap-4 md:justify-start">
                         {footerData.paymentMethods.map((method, idx) => (
-                            <Icon
-                                key={idx}
-                                icon={method.icon}
-                                className="text-2xl text-foreground-400"
-                            />
+                            <Icon key={idx} icon={method.icon} className="text-foreground-400 text-2xl" />
                         ))}
                     </div>
                     <div className="flex items-center gap-2">
@@ -219,7 +214,7 @@ const Footer: React.FC = () => {
 
                 <motion.div
                     variants={itemVariants}
-                    className="border-t border-divider pt-6 mt-8 text-center text-foreground-500 text-sm"
+                    className="border-divider text-foreground-500 mt-8 border-t pt-6 text-center text-sm"
                 >
                     <p>© {new Date().getFullYear()} Сакура Лотерея. Все права защищены.</p>
                     <p className="mt-2">Азартные игры могут вызывать привыкание. Пожалуйста, играйте ответственно.</p>
@@ -231,10 +226,10 @@ const Footer: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={isInView ? { opacity: 0.05 } : { opacity: 0 }}
                 transition={{ duration: 1.5, delay: 0.5 }}
-                className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                className="pointer-events-none absolute top-0 left-0 h-full w-full"
                 style={{
                     backgroundImage:
-                        "url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ff6680\" fill-opacity=\"0.2\"%3E%3Cpath d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')",
+                        'url(\'data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ff6680" fill-opacity="0.2"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\')',
                 }}
             />
         </footer>

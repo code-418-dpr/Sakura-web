@@ -1,17 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Image } from "@heroui/react";
-import NavbarElement from "@/components/Navbar/navbar";
+
+import React, { useEffect, useState } from "react";
+
 import FooterElement from "@/components/Footer/footer";
 import BackgroundPetals from "@/components/Landing/background-petals";
-import Hero from "@/components/Landing/hero";
-import WinnersSection from "@/components/Landing/winners-section";
-import TestimonialsSection from "@/components/Landing/testimonials-section";
 import FaqSection from "@/components/Landing/faq-section";
-import { Tab } from "@/types/tabs";
+import Hero from "@/components/Landing/hero";
 import { SectionScrollSnap } from "@/components/Landing/section-scroll-snap";
+import TestimonialsSection from "@/components/Landing/testimonials-section";
+import WinnersSection from "@/components/Landing/winners-section";
+import NavbarElement from "@/components/Navbar/navbar";
+import { Tab } from "@/types/tabs";
+import { Image } from "@heroui/react";
 
 export default function App() {
     const [activeTab, setActiveTab] = useState<Tab>("main");
@@ -25,7 +27,9 @@ export default function App() {
         // проверить сразу на случай reload внизу страницы
         handleScroll();
         window.addEventListener("scroll", handleScroll);
-        return () => { window.removeEventListener("scroll", handleScroll); };
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
     }, []);
 
     return (
@@ -38,18 +42,15 @@ export default function App() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={showNavbar ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
                 transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="fixed top-0 left-0 w-full z-50"
+                className="fixed top-0 left-0 z-50 w-full"
             >
-                <NavbarElement
-                    activeTab={activeTab}
-                    setActiveTabAction={setActiveTab}
-                />
+                <NavbarElement activeTab={activeTab} setActiveTabAction={setActiveTab} />
             </motion.div>
 
             {/* Banner */}
             <SectionScrollSnap
                 id="banner"
-                className="min-h-screen flex items-center justify-center transform -translate-y-[20px]"
+                className="flex min-h-screen -translate-y-[20px] transform items-center justify-center"
             >
                 <div className="container mx-auto">
                     <div className="flex flex-col items-center justify-between gap-8 px-4 py-16 md:flex-row md:items-center">
@@ -65,17 +66,11 @@ export default function App() {
                             />
                         </motion.div>
                         <div className="flex w-full flex-col items-center text-center md:w-[40%]">
-                            <Image
-                                alt="Sakura Logo"
-                                src="sakura.png"
-                                className="mb-4 h-auto w-32 md:w-40 lg:w-48"
-                            />
-                            <h1 className="text-4xl font-bold md:text-5xl lg:text-6xl bg-gradient-to-r from-primary-500 via-primary-400 to-secondary-500 bg-clip-text text-transparent">
+                            <Image alt="Sakura Logo" src="sakura.png" className="mb-4 h-auto w-32 md:w-40 lg:w-48" />
+                            <h1 className="from-primary-500 via-primary-400 to-secondary-500 bg-gradient-to-r bg-clip-text text-4xl font-bold text-transparent md:text-5xl lg:text-6xl">
                                 SAKURA
                             </h1>
-                            <p className="text-base text-gray-500 md:text-lg">
-                                Больше, чем просто лото
-                            </p>
+                            <p className="text-base text-gray-500 md:text-lg">Больше, чем просто лото</p>
                         </div>
                         <motion.div
                             className="flex w-full justify-center md:w-[30%] md:justify-end"

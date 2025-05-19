@@ -1,5 +1,6 @@
-import React, { useRef, useEffect } from "react";
 import { useInView } from "framer-motion";
+
+import React, { useEffect, useRef } from "react";
 
 interface SectionScrollSnapProps {
     children: React.ReactNode;
@@ -7,11 +8,7 @@ interface SectionScrollSnapProps {
     className?: string;
 }
 
-export const SectionScrollSnap: React.FC<SectionScrollSnapProps> = ({
-                                                                        children,
-                                                                        id,
-                                                                        className = "",
-                                                                    }) => {
+export const SectionScrollSnap: React.FC<SectionScrollSnapProps> = ({ children, id, className = "" }) => {
     const sectionRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(sectionRef, {
         margin: "-40% 0px -40% 0px",
@@ -28,8 +25,7 @@ export const SectionScrollSnap: React.FC<SectionScrollSnapProps> = ({
             const viewportHeight = window.innerHeight;
 
             // Насколько элемент смещён от центра
-            const distanceFromCenter =
-                rect.top + rect.height / 2 - viewportHeight / 2;
+            const distanceFromCenter = rect.top + rect.height / 2 - viewportHeight / 2;
 
             const threshold = viewportHeight * 0.2; // 20% высоты
 
@@ -47,12 +43,7 @@ export const SectionScrollSnap: React.FC<SectionScrollSnapProps> = ({
     }, [isInView]);
 
     return (
-        <section
-            id={id}
-            ref={sectionRef}
-            className={className}
-            data-section-id={id}
-        >
+        <section id={id} ref={sectionRef} className={className} data-section-id={id}>
             {children}
         </section>
     );

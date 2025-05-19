@@ -13,7 +13,7 @@ interface NavbarProps {
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: Tab[] = ["features", "customers", "integrations"];
+    const tabs: Tab[] = ["features", "customers", "user-profile"];
 
     const handleNavigation = (e: PressEvent, tab: Tab) => {
         setActiveTabAction(tab);
@@ -24,7 +24,7 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
             main: "Main",
             features: "Features",
             customers: "Customers",
-            integrations: "Integrations",
+            "user-profile": "User Profile",
         } as const;
 
         if (tab in labels) {

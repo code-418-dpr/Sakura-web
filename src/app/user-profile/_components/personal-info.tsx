@@ -2,7 +2,6 @@ import React from "react";
 
 import { PersonalInfoProps } from "@/lib/user-personal-info-props";
 import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Chip } from "@heroui/chip";
 import { Divider } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
@@ -42,7 +41,6 @@ export function PersonalInfo({ user }: PersonalInfoProps) {
                             <p className="text-medium font-medium text-white">{user.email}</p>
                         </div>
                     </div>
-                    {user.isVip && <Chip color="warning">VIP статус</Chip>}
                 </div>
             </CardBody>
         </Card>

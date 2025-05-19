@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import UserForm from "@/app/_components/auth/user-form";
+import UserForm from "@/app/_components/user-form";
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownMenuProps, DropdownTrigger } from "@heroui/react";
 
 export default function RegistrationFrom() {

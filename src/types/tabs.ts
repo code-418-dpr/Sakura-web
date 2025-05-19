@@ -1,1 +1,1 @@
-export type Tab = "main" | "features" | "customers" | "integrations";
+export type Tab = "main" | "features" | "customers" | "user-profile";

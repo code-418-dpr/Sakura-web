@@ -8,9 +8,10 @@ import { User } from "@/types/user";
 // import { ProfileSkeleton } from "@/app/user-profile/_components/skeleton";
 // import { AuthContext } from "@/hooks/use-auth";
 import { Card, CardBody } from "@heroui/card";
+import { Chip } from "@heroui/chip";
 import { Avatar } from "@heroui/react";
 
-export default function ProfilePage() {
+export default function userProfilePage() {
     // const { user } = useContext(AuthContext)!;
     const user: User = {
         id: "1",
@@ -53,7 +54,7 @@ export default function ProfilePage() {
                         <CardBody className="flex flex-col items-center space-y-4 p-6">
                             <Avatar
                                 className="text-large h-32 w-32"
-                                src="https://i.pravatar.cc/150?u=a04258114e29026708c"
+                                src="https://ds4-sosnovoborsk-r04.gosweb.gosuslugi.ru/netcat_files/21/10/blankdirectory_3.png"
                             />
                             <div className="pt-2 text-center">
                                 {user.patronymic === undefined ? (
@@ -64,6 +65,11 @@ export default function ProfilePage() {
                                     </h2>
                                 )}
                                 <p className="text-muted-foreground pt-2 text-sm">@{user.userName}</p>
+                                {user.isVip && (
+                                    <Chip className="mt-2" color="warning">
+                                        VIP статус
+                                    </Chip>
+                                )}
                             </div>
                             {/*<EditProfileModal user={user} />*/}
                         </CardBody>

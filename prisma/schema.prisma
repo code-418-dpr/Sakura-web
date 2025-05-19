@@ -39,7 +39,7 @@ model User {
   depositTransactions DepositTransaction[]
   notifications       Notification[]
   messages            ChatMessage[]
-  actions             Action[]
+  // actions             Action[]
 }
 
 model Account {

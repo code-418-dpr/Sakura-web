@@ -21,19 +21,6 @@ export const authOptions: NextAuthOptions = {
                         return null;
                     }
 
-                    if (
-                        process.env.ADMIN_EMAIL &&
-                        process.env.ADMIN_PASSWORD &&
-                        credentials.email === process.env.ADMIN_EMAIL &&
-                        credentials.password === process.env.ADMIN_PASSWORD
-                    ) {
-                        return {
-                            id: "admin-id",
-                            email: process.env.ADMIN_EMAIL,
-                            role: "ADMIN",
-                        };
-                    }
-
                     const user = await prisma.user.findUnique({
                         where: { email: credentials.email },
                     });
@@ -44,6 +31,7 @@ export const authOptions: NextAuthOptions = {
 
                     return {
                         id: user.id,
+                        name: user.name,
                         email: user.email,
                         role: user.role,
                     };
@@ -58,6 +46,7 @@ export const authOptions: NextAuthOptions = {
         jwt({ token, user }) {
             if (user as User | undefined) {
                 token.id = user.id;
+                token.name = user.name;
                 token.role = user.role as UserRole;
             }
             return token;
@@ -65,7 +54,7 @@ export const authOptions: NextAuthOptions = {
         session({ session, token }) {
             session.user.id = token.id;
             session.user.role = token.role as UserRole;
-
+            session.user.name = token.name;
             return session;
         },
         redirect({ url, baseUrl }) {

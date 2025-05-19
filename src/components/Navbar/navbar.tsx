@@ -2,9 +2,19 @@
 
 import React from "react";
 
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/hooks/use-auth";
 import { Tab } from "@/types/tabs";
 import {
+    Avatar,
     Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownSection,
+    DropdownTrigger,
     Image,
     Link,
     Navbar,
@@ -12,8 +22,10 @@ import {
     NavbarContent,
     NavbarItem,
     PressEvent,
+    Spinner,
     useDisclosure,
 } from "@heroui/react";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 import AuthForm from "../auth/auth-form";
 import ModalOrDrawer from "../modal-or-drawer";
@@ -25,18 +37,18 @@ interface NavbarProps {
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: Tab[] = ["features", "customers", "integrations"];
+    const tabs: Tab[] = ["catalog"];
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { user, isLoading, isAuthenticated } = useAuth();
+    const router = useRouter();
     const handleNavigation = (e: PressEvent, tab: Tab) => {
         setActiveTabAction(tab);
     };
 
     const getTabLabel = (tab: Tab): string => {
         const labels = {
+            catalog: "Каталог",
             main: "Main",
-            features: "Features",
-            customers: "Customers",
-            "user-profile": "User Profile",
         } as const;
 
         if (tab in labels) {
@@ -44,7 +56,11 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
         }
         return tab.toString();
     };
-
+    const handleLogout = async () => {
+        await signOut({ redirect: false });
+        router.push("/");
+        router.refresh();
+    };
     return (
         <>
             <Navbar>
@@ -69,16 +85,84 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                     ))}
                 </NavbarContent>
                 <NavbarContent justify="end">
-                    <NavbarItem>
+                    {isLoading ? (
+                        <Spinner size="sm" />
+                    ) : isAuthenticated ? (
                         <>
-                            <Button color="primary" variant="flat" onPress={onOpen}>
-                                Войти
-                            </Button>
-                            <ModalOrDrawer label="Авторизация" isOpen={isOpen} onOpenChangeAction={onOpenChange}>
-                                <AuthForm />
-                            </ModalOrDrawer>
+                            <NavbarItem>
+                                <Button
+                                    className="rounded-4xl"
+                                    variant="flat"
+                                    startContent={React.createElement(Icon, {
+                                        icon: "iconoir:bell",
+                                        className: "text-lg",
+                                    })}
+                                    isIconOnly
+                                ></Button>
+                            </NavbarItem>
+                            <NavbarItem>
+                                <Dropdown shouldBlockScroll={false} showArrow>
+                                    <DropdownTrigger>
+                                        <div className="flex cursor-pointer items-center gap-3">
+                                            <Avatar
+                                                showFallback
+                                                src="https://images.unsplash.com/broken"
+                                                isBordered
+                                                color="primary"
+                                                className="text-default-100"
+                                                size="sm"
+                                            />
+
+                                            <div className="flex flex-col text-sm leading-tight">
+                                                <span className="text-md font-medium">{user?.name}</span>
+                                                <span className="text-default-600 text-md">
+                                                    00,00&nbsp;
+                                                    <span className="inline-block align-middle">₽</span> | 0&nbsp;
+                                                    <span className="inline-block align-middle text-xs">
+                                                        <Icon icon="iconoir:leaf" width="16" height="16" />
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </DropdownTrigger>
+                                    <DropdownMenu aria-label="Profile Actions" variant="flat">
+                                        <DropdownSection aria-label="Profile" showDivider>
+                                            <DropdownItem key="profile">
+                                                <Link href="/user-profile">Мой профиль</Link>
+                                            </DropdownItem>
+                                            <DropdownItem key="settings">Настройки</DropdownItem>
+                                        </DropdownSection>
+                                        <DropdownSection aria-label="Profile" showDivider>
+                                            <DropdownItem key="achievments">Достижения</DropdownItem>
+                                            <DropdownItem key="notifications">Уведомления</DropdownItem>
+                                        </DropdownSection>
+                                        <DropdownSection aria-label="Logout">
+                                            <DropdownItem
+                                                key="logout"
+                                                color="danger"
+                                                onPress={() => {
+                                                    handleLogout().catch(console.error);
+                                                }}
+                                            >
+                                                Выйти
+                                            </DropdownItem>
+                                        </DropdownSection>
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </NavbarItem>
                         </>
-                    </NavbarItem>
+                    ) : (
+                        <NavbarItem>
+                            <>
+                                <Button color="primary" variant="flat" onPress={onOpen}>
+                                    Войти
+                                </Button>
+                                <ModalOrDrawer label="Авторизация" isOpen={isOpen} onOpenChangeAction={onOpenChange}>
+                                    <AuthForm />
+                                </ModalOrDrawer>
+                            </>
+                        </NavbarItem>
+                    )}
                     <NavbarItem>
                         <ThemeSwitcher />
                     </NavbarItem>

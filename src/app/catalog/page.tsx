@@ -45,7 +45,7 @@ export default function CatalogPage() {
                     page,
                     pageSize: perPage,
                 });
-
+                console.log(result.items);
                 setLotteriesData({
                     items: result.items,
                     pagination: {

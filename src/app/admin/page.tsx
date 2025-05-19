@@ -12,7 +12,7 @@ export default function AdminPage() {
     const [activeTab, setActiveTab] = useState<PageTab>("main");
 
     return (
-        <div className="mx-auto w-9/10">
+        <div className="mx-2">
             <NavbarElement activeTab={activeTab} setActiveTabAction={setActiveTab} />
             <Tabs className="mt-4" aria-label="AdminTabs" fullWidth>
                 <Tab key="users" title="Пользователи">

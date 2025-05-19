@@ -87,7 +87,7 @@ model Lottery {
 }
 
 model Prize {
-  id           String  @default(uuid())
+  id           String  @id @default(uuid())
   title        String?
   lotteryId    String
   realPrice    Float

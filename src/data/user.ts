@@ -13,6 +13,17 @@ export const getUserById = async (id: string) => {
     return db.user.findUnique({ where: { id } });
 };
 
+export const awardReferalUserById = async (id: string) => {
+    return db.user.update({
+        where: { id },
+        data: {
+            virtualBalance: {
+                increment: 100n,
+            },
+        },
+    });
+};
+
 export const createUser = async (name: string, email: string, password: string, role?: UserRole) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     return db.user.create({ data: { name, email, password: hashedPassword, role } });

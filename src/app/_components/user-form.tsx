@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 
 // import { register } from "@/api/accounts";
 import PasswordInput from "@/components/password-input";
-import { createUser, getUserById } from "@/data/user";
+import { awardReferalUserById, createUser, getUserById } from "@/data/user";
 // import { RegisterProps } from "@/models/requests/RegisterProps";
 import { baseRegistrationSchema } from "@/schemas/base-registration-schema";
 import { Alert, Button, Checkbox, Input } from "@heroui/react";
@@ -71,6 +71,7 @@ export default function UserForm() {
             if (data.referal) {
                 const user = await getUserById(data.referal);
                 if (!user) throw new Error("Реферальная ссылка не найдена");
+                await awardReferalUserById(data.referal);
             }
 
             await createUser(data.nickname, data.email, data.password);

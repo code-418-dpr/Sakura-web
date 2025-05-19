@@ -2,16 +2,19 @@
 
 import React from "react";
 
+import { EditProfileForm } from "@/app/user-profile/_components/edit-form";
 // import { EditProfileModal } from "@/app/profile/Components/PersonalInfo/editProfileModal";
 import { ProfileTabs } from "@/app/user-profile/_components/profile-tabs";
+import ModalOrDrawer from "@/components/modal-or-drawer";
 import { User } from "@/types/user";
 // import { ProfileSkeleton } from "@/app/user-profile/_components/skeleton";
 // import { AuthContext } from "@/hooks/use-auth";
 import { Card, CardBody } from "@heroui/card";
 import { Chip } from "@heroui/chip";
-import { Avatar } from "@heroui/react";
+import { Avatar, Button, useDisclosure } from "@heroui/react";
 
-export default function userProfilePage() {
+export default function UserProfilePage() {
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     // const { user } = useContext(AuthContext)!;
     const user: User = {
         id: "1",
@@ -71,7 +74,12 @@ export default function userProfilePage() {
                                     </Chip>
                                 )}
                             </div>
-                            {/*<EditProfileModal user={user} />*/}
+                            <Button color="primary" onPress={onOpen} variant="solid" className="h-[30px]" radius={"sm"}>
+                                Редактировать
+                            </Button>
+                            <ModalOrDrawer label="Редактировать" isOpen={isOpen} onOpenChangeAction={onOpenChange}>
+                                <EditProfileForm user={user} />
+                            </ModalOrDrawer>
                         </CardBody>
                     </Card>
                 </div>

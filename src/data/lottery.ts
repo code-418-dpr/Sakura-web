@@ -78,6 +78,10 @@ export const getLotteryByTitle = async (title: string) => {
     return prisma.lottery.findFirst({ where: { title: { equals: title } } });
 };
 
+export const getLotteryAll = async () => {
+    return prisma.lottery.findMany({});
+}
+
 export const createLottery = async (
     title: string,
     description: string,

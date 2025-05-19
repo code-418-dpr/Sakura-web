@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 
-interface SearchRepresentativeEventsParams {
+interface SearchLotteriesParams {
     query?: string;
     start?: Date;
     end?: Date;
@@ -14,7 +14,7 @@ interface SearchRepresentativeEventsParams {
     maxTicketPrice?: number;
 }
 
-export async function searchRepresentativeEvents(params: SearchRepresentativeEventsParams) {
+export async function searchLotteries(params: SearchLotteriesParams) {
     const { query, prizeType, start, end, isVip, isReal, ticketPrice, minTicketPrice, maxTicketPrice } = params;
     return prisma.lottery.findMany({
         where: {

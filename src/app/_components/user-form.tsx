@@ -13,7 +13,7 @@ import PasswordInput from "@/components/password-input";
 import { createUser } from "@/data/user";
 // import { RegisterProps } from "@/models/requests/RegisterProps";
 import { baseRegistrationSchema } from "@/schemas/base-registration-schema";
-import { Alert, Button, Input } from "@heroui/react";
+import { Alert, Button, Checkbox, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const userSchema = baseRegistrationSchema
@@ -25,6 +25,12 @@ const userSchema = baseRegistrationSchema
             .regex(/[a-zа-яё]/, "Пароль должен содержать хотя бы одну строчную букву")
             .regex(/[0-9]/, "Пароль должен содержать хотя бы одну цифру"),
         passwordRepeat: z.string(),
+        privacyPolicy: z.literal<boolean>(true, {
+            errorMap: () => ({ message: "Необходимо принять условия" }),
+        }),
+        termsOfUse: z.literal<boolean>(true, {
+            errorMap: () => ({ message: "Необходимо принять условия" }),
+        }),
     })
     .refine((data) => data.password === data.passwordRepeat, {
         message: "Пароли не совпадают",
@@ -39,9 +45,16 @@ export default function UserForm() {
     const {
         register: registerValidator,
         handleSubmit,
+        watch,
         formState: { errors },
     } = useForm({
         resolver: zodResolver(userSchema),
+        defaultValues: {
+            // Добавляем начальные значения
+            privacyPolicy: false,
+            termsOfUse: false,
+        },
+        mode: "onChange",
     });
 
     const onSubmit: SubmitHandler<z.infer<typeof userSchema>> = async (data) => {
@@ -51,16 +64,6 @@ export default function UserForm() {
             setMessageType(null);
 
             console.log(data);
-
-            /*
-            const registerData: RegisterProps = {
-                email: data.email,
-                userName: data.nickname,
-                firstName: data.firstname,
-                secondName: data.secondname,
-                patronymic: data.patronymic || null,
-                password: data.password,
-            };*/
 
             await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -109,30 +112,6 @@ export default function UserForm() {
                     isInvalid={!!errors.nickname}
                     errorMessage={errors.nickname?.message}
                 />
-                <Input
-                    label="Имя"
-                    type="text"
-                    variant="bordered"
-                    {...registerValidator("firstname")}
-                    isInvalid={!!errors.firstname}
-                    errorMessage={errors.firstname?.message}
-                />
-                <Input
-                    label="Фамилия"
-                    type="text"
-                    variant="bordered"
-                    {...registerValidator("lastname")}
-                    isInvalid={!!errors.lastname}
-                    errorMessage={errors.lastname?.message}
-                />
-                <Input
-                    label="Отчество"
-                    type="text"
-                    variant="bordered"
-                    {...registerValidator("patronymic")}
-                    isInvalid={!!errors.patronymic}
-                    errorMessage={errors.patronymic?.message}
-                />
                 <PasswordInput
                     {...registerValidator("password")}
                     isInvalid={!!errors.password}
@@ -144,8 +123,24 @@ export default function UserForm() {
                     isInvalid={!!errors.passwordRepeat}
                     errorMessage={errors.passwordRepeat?.message}
                 />
+                <Checkbox {...registerValidator("privacyPolicy")} isInvalid={!!errors.privacyPolicy}>
+                    Согласен с обработкой персональных данных
+                </Checkbox>
+                {errors.privacyPolicy && <p className="text-danger text-sm">{errors.privacyPolicy.message}</p>}
+
+                <Checkbox {...registerValidator("termsOfUse")} isInvalid={!!errors.termsOfUse}>
+                    Согласен с условиями платформы и законодательством РФ
+                </Checkbox>
+                {errors.termsOfUse && <p className="text-danger text-sm">{errors.termsOfUse.message}</p>}
                 {message && <Alert color={"danger"} title={message} />}
-                <Button type="submit" color="success" isLoading={isLoading} fullWidth className="mt-6">
+                <Button
+                    type="submit"
+                    color="success"
+                    isLoading={isLoading}
+                    fullWidth
+                    className="mt-6"
+                    isDisabled={!watch("privacyPolicy") || !watch("termsOfUse")}
+                >
                     Регистрация
                 </Button>
             </div>

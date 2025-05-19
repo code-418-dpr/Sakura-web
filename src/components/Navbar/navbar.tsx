@@ -25,7 +25,7 @@ interface NavbarProps {
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: Tab[] = ["features", "customers", "integrations"];
+    const tabs: Tab[] = ["features", "customers", "user-profile"];
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const handleNavigation = (e: PressEvent, tab: Tab) => {
         setActiveTabAction(tab);

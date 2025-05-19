@@ -25,8 +25,7 @@ model User {
   inviterId     String?
   balance       BigInt
 
-  accounts  Account[]
-  lotteries Lottery[]
+  accounts Account[]
 }
 
 model Account {

@@ -35,7 +35,7 @@ export const authOptions: NextAuthOptions = {
                         email: user.email,
                         role: user.role,
                         realBalance: (user.realBalance).toString(),
-                        virtualBalance: (user.virtualBalance).toString(),
+                        virtualBalance: user.virtualBalance.toString(),
                     };
                 } catch (error) {
                     console.error("Auth error:", error);

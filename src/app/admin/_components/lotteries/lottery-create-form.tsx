@@ -5,6 +5,9 @@ import { z } from "zod";
 import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
+import { useRouter } from "next/navigation";
+
+import { createLottery } from "@/data/lottery";
 import { lotterySchema } from "@/schemas/lottery-schema";
 import { LotteryRequestData } from "@/types/lottery-request-data";
 import { Textarea } from "@heroui/input";
@@ -29,6 +32,7 @@ export default function LotteryCreateForm({ className }: React.ComponentProps<"f
     const [vipDiscount, setVipDiscount] = useState<number>(0);
     const [description, setDescription] = useState<string>("");
     const [rules, setRules] = useState<string>("");
+    const router = useRouter();
 
     const methods = useForm<LotteryFormData>({
         resolver: zodResolver(lotterySchema),
@@ -47,25 +51,25 @@ export default function LotteryCreateForm({ className }: React.ComponentProps<"f
             const endDate = new Date(end);
 
             const requestData: LotteryRequestData = {
-                title,
-                description,
-                isReal,
-                start: startDate,
-                end: endDate,
+                title: title,
+                description: description,
+                isReal: isReal,
                 participantsCount: participantsCount,
                 vipParticipantsCount: vipParticipantsCount,
                 winnersCount: winnersCount,
                 primeWinnersCount: primeWinnersCount,
                 ticketPrice: ticketPrice,
                 vipDiscount: vipDiscount,
+                start: startDate,
+                end: endDate,
                 rules: rules,
             };
             console.log(requestData);
-            await new Promise((resolve) => setTimeout(resolve, 500));
 
-            // await createLotteryRequest(requestData);
+            await createLottery(requestData);
 
             setFormError("Заявка успешно создана!");
+            router.refresh();
         } catch (error) {
             if (error instanceof Error) {
                 setFormError(error.message);
@@ -146,25 +150,27 @@ export default function LotteryCreateForm({ className }: React.ComponentProps<"f
                     />
 
                     <Input
-                        label="Максимальное количество команд"
-                        aria-label="Максимальное количество команд"
+                        label="Количество победителей"
                         type="number"
+                        aria-label="Количество победителей"
                         variant="bordered"
                         value={winnersCount.toString()}
                         onChange={(e) => {
                             setWinnersCount(Number(e.target.value));
                         }}
                     />
+
                     <Input
-                        label="Количество победителей"
+                        label="Количество супер призёров"
                         type="number"
-                        aria-label="Количество победителей"
+                        aria-label="Количество супер призёров"
                         variant="bordered"
                         value={primeWinnersCount.toString()}
                         onChange={(e) => {
                             setPrimeWinnersCount(Number(e.target.value));
                         }}
                     />
+
                     <Input
                         label="Стоимость билета"
                         type="number"

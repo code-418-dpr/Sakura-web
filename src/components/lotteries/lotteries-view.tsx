@@ -47,6 +47,10 @@ export default function LotteriesView() {
                         totalPages: Math.ceil(result.total / perPage),
                     },
                 });
+
+                console.log(lotteriesData);
+                console.log(result.total);
+                console.log(Math.ceil(result.total / perPage));
             } catch (error) {
                 console.error("Search failed:", error);
             } finally {

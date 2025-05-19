@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 
+import { SearchLotteriesParams } from "@/types/lottery-item";
 import {
     Button,
     Checkbox,
     DateRangePicker,
+    DateValue,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -14,7 +16,7 @@ import {
     Input,
     NumberInput,
 } from "@heroui/react";
-import type { Selection } from "@react-types/shared";
+import type { RangeValue, Selection } from "@react-types/shared";
 
 interface AwardItem {
     key: string;
@@ -26,16 +28,44 @@ const AWARDS: AwardItem[] = [
     { key: "BONUS", name: "Бонусные баллы" },
     { key: "PRODUCT", name: "Товары" },
 ];
-export function SearchForm() {
+
+interface SearchFormProps {
+    onSubmit: (params: SearchLotteriesParams) => void;
+}
+export function SearchForm({ onSubmit }: SearchFormProps) {
     const [query, setQuery] = useState("");
-    const [selectedAward, setSelectedAward] = React.useState<string>();
+    const [selectedAward, setSelectedAward] = useState<string>();
+    const [dateRange, setDateRange] = useState<{ start?: Date; end?: Date }>({});
+    const [isVip, setIsVip] = useState(false);
+    const [minTicketPrice, setMinTicketPrice] = useState<number>();
+    const [maxTicketPrice, setMaxTicketPrice] = useState<number>();
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
+        const params: SearchLotteriesParams = {
+            query: query || undefined,
+            prizeType: selectedAward as "MONEY" | "POINTS" | "PRODUCTS" | undefined,
+            start: dateRange.start,
+            end: dateRange.end,
+            isVip: isVip || undefined,
+            minTicketPrice,
+            maxTicketPrice,
+        };
+
+        onSubmit(params);
         setIsLoading(false);
+    };
+
+    const handleReset = () => {
+        setQuery("");
+        setSelectedAward(undefined);
+        setDateRange({});
+        setIsVip(false);
+        setMinTicketPrice(undefined);
+        setMaxTicketPrice(undefined);
     };
 
     const renderDropdown = (
@@ -70,8 +100,20 @@ export function SearchForm() {
             </div>
         );
     };
+
+    const handleDateChange = (newRange: RangeValue<DateValue> | null) => {
+        if (newRange?.start) {
+            setDateRange({
+                start: new Date(newRange.start.year, newRange.start.month - 1, newRange.start.day),
+                end: new Date(newRange.end.year, newRange.end.month - 1, newRange.end.day),
+            });
+        } else {
+            setDateRange({});
+        }
+    };
+
     return (
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} onReset={handleReset}>
             <div className="grid w-full grid-cols-1 gap-4">
                 <div className="col-span-full">
                     <Input
@@ -87,7 +129,7 @@ export function SearchForm() {
 
                 <div className="mb-4">
                     <label className="mb-2 block translate-x-2 text-sm font-medium">Интервал проведения</label>
-                    <DateRangePicker className="w-full" />
+                    <DateRangePicker className="w-full" onChange={handleDateChange} />
                 </div>
                 {renderDropdown(
                     "Призовой фонд",
@@ -102,12 +144,28 @@ export function SearchForm() {
                 <div>
                     <p className="translate-x-2 text-sm font-medium">Стоимость</p>
                     <div className="mt-4 flex flex-row gap-4">
-                        <NumberInput className="" placeholder="Минимальная" defaultValue={0} />
+                        <NumberInput
+                            className=""
+                            placeholder="Минимальная"
+                            defaultValue={0}
+                            value={minTicketPrice}
+                            onChange={(value) => {
+                                setMinTicketPrice(Number(value));
+                            }}
+                        />
                         <p className="flex items-center text-2xl font-bold">-</p>
-                        <NumberInput className="" placeholder="Максимальная" defaultValue={100000} />
+                        <NumberInput
+                            className=""
+                            placeholder="Максимальная"
+                            defaultValue={100000}
+                            value={maxTicketPrice}
+                            onChange={(value) => {
+                                setMaxTicketPrice(Number(value));
+                            }}
+                        />
                     </div>
                 </div>
-                <Checkbox defaultSelected className="translate-x-2">
+                <Checkbox isSelected={isVip} onValueChange={setIsVip} className="translate-x-2">
                     VIP
                 </Checkbox>
             </div>

@@ -119,8 +119,9 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                                             <div className="flex flex-col text-sm leading-tight">
                                                 <span className="text-md font-medium">{user?.name}</span>
                                                 <span className="text-default-600 text-md">
-                                                    00,00&nbsp;
-                                                    <span className="inline-block align-middle">₽</span> | 0&nbsp;
+                                                    {user?.realBalance}&nbsp;
+                                                    <span className="inline-block align-middle">₽</span> |{" "}
+                                                    {user?.virtualBalance}&nbsp;
                                                     <span className="inline-block align-middle text-xs">
                                                         <Icon icon="iconoir:leaf" width="16" height="16" />
                                                     </span>

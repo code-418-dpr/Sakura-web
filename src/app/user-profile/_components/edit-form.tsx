@@ -12,10 +12,8 @@ export function EditProfileForm({ user }: PersonalInfoProps) {
     const router = useRouter();
     // const updateUserData = useContext(AuthContext)!.updateUserData;
     const [formData, setFormData] = useState({
-        firstName: user.firstName || undefined,
-        lastname: user.lastname || undefined,
-        patronymic: user.patronymic ?? undefined,
-        phone: user.phone || undefined,
+        firstName: user.name || undefined,
+        phone: user.phone ?? undefined,
         email: user.email || undefined,
     });
 
@@ -30,10 +28,10 @@ export function EditProfileForm({ user }: PersonalInfoProps) {
 
             const data: UpdateProfileProps = {
                 firstName: formData.firstName,
-                lastname: formData.lastname,
-                patronymic: formData.patronymic,
                 phone: formData.phone,
                 email: formData.email,
+                lastname: undefined,
+                patronymic: undefined,
             };
 
             console.log(data);
@@ -59,22 +57,6 @@ export function EditProfileForm({ user }: PersonalInfoProps) {
                 type="text"
                 variant="bordered"
                 value={formData.firstName}
-                onChange={handleInputChange}
-            />
-            <Input
-                name="secondName"
-                label="Фамилия"
-                type="text"
-                variant="bordered"
-                value={formData.lastname}
-                onChange={handleInputChange}
-            />
-            <Input
-                name="patronymic"
-                label="Отчество"
-                type="text"
-                variant="bordered"
-                value={formData.patronymic}
                 onChange={handleInputChange}
             />
             <Input

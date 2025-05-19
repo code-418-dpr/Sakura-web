@@ -1,10 +1,18 @@
+import { UserRole } from "@/app/generated/prisma";
+
 export interface User {
     id: string;
-    userName: string;
+    name: string;
     email: string;
-    phone: string;
-    firstName: string;
-    lastname: string;
-    patronymic: string | null | undefined;
-    isVip: boolean;
+    emailVerified: Date | null;
+    phone: string | null;
+    image: string | null;
+    password: string;
+    role: UserRole;
+    vipDatetime: Date | null;
+    inviterId: string | null;
+    realBalance: bigint;
+    virtualBalance: bigint;
+    score: bigint;
+    lastActivity: Date;
 }

@@ -36,7 +36,7 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
             main: "Main",
             features: "Features",
             customers: "Customers",
-            integrations: "Integrations",
+            "user-profile": "User Profile",
         } as const;
 
         if (tab in labels) {

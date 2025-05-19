@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useAuth } from "@/hooks/use-auth";
-import { Tab } from "@/types/tabs";
+import { PageTab } from "@/types/tabs";
 import {
     Avatar,
     Button,
@@ -32,30 +32,24 @@ import ModalOrDrawer from "../modal-or-drawer";
 import { ThemeSwitcher } from "../theme-switcher";
 
 interface NavbarProps {
-    activeTab: Tab;
-    setActiveTabAction: React.Dispatch<React.SetStateAction<Tab>>;
+    activeTab: PageTab;
+    setActiveTabAction: React.Dispatch<React.SetStateAction<PageTab>>;
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: Tab[] = ["catalog"];
+    const tabs: PageTab[] = ["catalog"];
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { user, isLoading, isAuthenticated } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
 
-    const handleNavigation = (e: PressEvent, tab: Tab) => {
+    const handleNavigation = (e: PressEvent, tab: PageTab) => {
         setActiveTabAction(tab);
     };
 
-    const getTabLabel = (tab: Tab): string => {
+    const getTabLabel = (tab: PageTab): string => {
         const labels = {
-<<<<<<< HEAD
             catalog: "Каталог",
-            main: "Main",
-=======
-            features: "Features",
-            customers: "Customers",
->>>>>>> df544b5 (refactor: remove useless code)
         } as const;
 
         if (tab in labels) {

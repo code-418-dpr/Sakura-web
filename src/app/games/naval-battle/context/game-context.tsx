@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from "react";
 
+import { updateUser } from "@/data/user";
+import { useAuth } from "@/hooks/use-auth";
+
 import type {
     GameState as BaseGameState,
     Board,
@@ -425,8 +428,23 @@ export interface GameContextType {
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { user, update: updateAuth } = useAuth();
     const [state, dispatch] = useReducer(gameReducer, initialState);
+    useEffect(() => {
+        const handlePlayerWin = async () => {
+            if (state.gameOver && state.winner === "player" && user) {
+                try {
+                    const newRealBalance = Number(user.realBalance) + state.pot;
+                    await updateUser(user.id, newRealBalance, Number(user.virtualBalance));
+                    await updateAuth();
+                } catch (error) {
+                    console.error("Ошибка начисления выигрыша:", error);
+                }
+            }
+        };
 
+        void handlePlayerWin();
+    }, [state.gameOver, state.winner, state.pot, user, updateAuth]);
     useEffect(() => {
         let timeout: NodeJS.Timeout;
         if (state.gameStarted && !state.isPlayerTurn && !state.gameOver) {

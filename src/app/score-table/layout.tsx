@@ -9,7 +9,7 @@ import { PageTab } from "@/types/tabs";
 import Loading from "./loading";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-    const [activeTab, setActiveTab] = useState<PageTab>("score");
+    const [activeTab, setActiveTab] = useState<PageTab>("score-table");
     return (
         <Suspense fallback={<Loading />}>
             <NavbarElement activeTab={activeTab} setActiveTabAction={setActiveTab} />

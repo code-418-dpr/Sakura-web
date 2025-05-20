@@ -6,6 +6,7 @@ import { EditProfileForm } from "@/app/user-profile/_components/edit-form";
 import { ProfileTabs } from "@/app/user-profile/_components/profile-tabs";
 import NavbarElement from "@/components/Navbar/navbar";
 import ModalOrDrawer from "@/components/modal-or-drawer";
+import PaymentFormForVIPorBalance from "@/components/payment-methods-for-vip-balance";
 import { getUserByEmail } from "@/data/user";
 import { useAuth } from "@/hooks/use-auth";
 import { PageTab } from "@/types/tabs";
@@ -18,6 +19,7 @@ import { ProfileSkeleton } from "./_components/skeleton";
 
 export default function UserProfilePage() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen: isVipOpen, onOpen: onVipOpen, onOpenChange: onVipOpenChange } = useDisclosure();
     const [activeTab, setActiveTab] = useState<PageTab>("main");
     const { user } = useAuth();
     const [fullUser, setFullUser] = useState<User | null>(null);
@@ -67,7 +69,7 @@ export default function UserProfilePage() {
                                             VIP статус
                                         </Chip>
                                     ) : (
-                                        <Button className="mt-2" size="md" color="warning">
+                                        <Button className="mt-2" size="md" color="warning" onPress={onVipOpen}>
                                             Купить VIP статус
                                         </Button>
                                     )}
@@ -96,6 +98,14 @@ export default function UserProfilePage() {
                         </div>
                     </div>
                 </div>
+                <ModalOrDrawer
+                    label="Оплата VIP статуса"
+                    isOpen={isVipOpen}
+                    onOpenChangeAction={onVipOpenChange}
+                    size="xl"
+                >
+                    <PaymentFormForVIPorBalance onClose={onVipOpenChange} />
+                </ModalOrDrawer>
             </div>
         </div>
     );

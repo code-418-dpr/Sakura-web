@@ -39,3 +39,15 @@ export const updateUser = async (id: string, realBalance: number, virtualBalance
         },
     });
 };
+export const updateUserVip = async (id: string, vipDays: number) => {
+    const vipDate = new Date();
+    vipDate.setDate(vipDate.getDate() + vipDays);
+
+    return db.user.update({
+        where: { id: id },
+        data: {
+            vipDatetime: vipDate,
+            lastActivity: new Date(),
+        },
+    });
+};

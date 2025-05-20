@@ -29,6 +29,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 
 import AuthForm from "../auth/auth-form";
 import ModalOrDrawer from "../modal-or-drawer";
+import PaymentFormForVIPorBalance from "../payment-methods-for-vip-balance";
 import { ThemeSwitcher } from "../theme-switcher";
 
 interface NavbarProps {
@@ -40,6 +41,7 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
     const tabs: PageTab[] = ["catalog", "sakura", "games"];
     const { isOpen: isAuthOpen, onOpen: onAuthOpen, onOpenChange: onAuthOpenChange } = useDisclosure();
     const { isOpen: isReferalOpen, onOpen: onReferalOpen, onOpenChange: onReferalOpenChange } = useDisclosure();
+    const { isOpen: isBalanceOpen, onOpen: onBalanceOpen, onOpenChange: onBalanceOpenChange } = useDisclosure();
     const { user, isLoading, isAuthenticated } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
@@ -114,7 +116,7 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                                                 showFallback
                                                 src="https://images.unsplash.com/broken"
                                                 isBordered
-                                                color="primary"
+                                                color={user?.isVip ? "primary" : "warning"}
                                                 className="text-default-100"
                                                 size="sm"
                                             />
@@ -137,7 +139,9 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                                             <DropdownItem key="profile">
                                                 <Link href="/user-profile">Мой профиль</Link>
                                             </DropdownItem>
-                                            <DropdownItem key="settings">Настройки</DropdownItem>
+                                            <DropdownItem key="settings" onPress={onBalanceOpen}>
+                                                Пополнить баланс
+                                            </DropdownItem>
                                         </DropdownSection>
                                         <DropdownSection aria-label="Profile" showDivider>
                                             <DropdownItem key="achievments">Достижения</DropdownItem>
@@ -190,6 +194,14 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                     </NavbarItem>
                 </NavbarContent>
             </Navbar>
+            <ModalOrDrawer
+                label="Оплата VIP статуса"
+                isOpen={isBalanceOpen}
+                onOpenChangeAction={onBalanceOpenChange}
+                size="xl"
+            >
+                <PaymentFormForVIPorBalance onClose={onBalanceOpenChange} isBalance={true} />
+            </ModalOrDrawer>
         </>
     );
 }

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
+import { AchievementGrid } from "@/app/sakura/_components/achievements";
 import NavbarElement from "@/components/Navbar/navbar";
 import { getUserByEmail } from "@/data/user";
 import { useAuth } from "@/hooks/use-auth";
@@ -93,5 +94,10 @@ const getSakuraState = (user: User | null) => {
 };
 
 function Achievements() {
-    return <></>;
+    return (
+        <div className="mx-auto max-w-5xl">
+            <h1 className="mb-6 text-2xl font-bold">Достижения</h1>
+            <AchievementGrid />
+        </div>
+    );
 }

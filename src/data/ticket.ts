@@ -1,6 +1,7 @@
 "use server";
 
 import db from "@/lib/prisma";
+import { WinnerTicketUser } from "@/types/winner";
 
 export const createTicket = async (userId: string, lotteryId: string, price: number) => {
     // 1. Получаем лимит участников
@@ -52,9 +53,26 @@ export async function getLotteryWinnerTickets(lotteryId: string) {
     if (!lottery) {
         return null;
     }
-    return db.ticket.findMany({
+    const rawTickets = await db.ticket.findMany({
         where: { lotteryId },
+        select: {
+            number: true,
+            place: true,
+            user: {
+                select: {
+                    name: true,
+                    email: true,
+                },
+            },
+        },
         orderBy: { place: "asc" },
         take: lottery.winnersCount,
     });
+    const result: WinnerTicketUser[] = rawTickets.map((ticket) => ({
+        number: ticket.number.toString(),
+        place: ticket.place,
+        user: ticket.user,
+    }));
+
+    return result;
 }

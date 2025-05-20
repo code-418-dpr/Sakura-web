@@ -4,10 +4,14 @@
 import React, { useEffect, useState } from "react";
 
 import { getUserLotteryById } from "@/data/lottery";
+import { getLotteryPrizes } from "@/data/prize";
+import { getLotteryWinnerTickets } from "@/data/ticket";
 import { UsersLotteryTicket } from "@/data/userLottery";
 import { useAuth } from "@/hooks/use-auth";
+import { PrizeWinner, WinnerTicketUser } from "@/types/winner";
 import { formatDatetime } from "@/utils";
 import {
+    Avatar,
     Button,
     Chip,
     Image,
@@ -25,6 +29,8 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import ModalOrDrawer from "../modal-or-drawer";
 import PaymentForm from "../payment-form";
 
+ 
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 interface Props {
@@ -36,12 +42,23 @@ export default function MyLotteryDetails({ userId, loteryId }: Props) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [winners, setWinners] = useState<WinnerTicketUser[]>([]);
+    const [prizes, setPrizes] = useState<PrizeWinner[]>([]);
     const { user } = useAuth();
     useEffect(() => {
         const loadEvent = async () => {
             try {
                 const data = (await getUserLotteryById(userId!, loteryId))!;
                 setLottery(data);
+                if (new Date() < new Date(data.end)) {
+                    const [winnersData, prizesData] = await Promise.all([
+                        getLotteryWinnerTickets(loteryId),
+                        getLotteryPrizes(loteryId),
+                    ]);
+
+                    setWinners(winnersData ?? []);
+                    setPrizes(prizesData ?? []);
+                }
             } catch {
                 setError("Не удалось загрузить данные о событии.");
             } finally {
@@ -139,46 +156,102 @@ export default function MyLotteryDetails({ userId, loteryId }: Props) {
             </div>
             <div className="">
                 <h1 className="text-center text-xl">Ваши билеты</h1>
-                {new Date() > new Date(lottery.end) ? (
-                    <div className="text-foreground/50 text-center">Лотерея ещё не завершилась</div>
-                ) : (
-                    <Table aria-label="Ваши билеты" className="mt-4">
-                        <TableHeader>
-                            <TableColumn>Номер билета</TableColumn>
-                            <TableColumn>Стоимость</TableColumn>
-                            <TableColumn>Статус</TableColumn>
-                            <TableColumn>Приз</TableColumn>
-                        </TableHeader>
-                        <TableBody>
-                            {lottery.userTickets.map((ticket) => {
-                                const prize =
-                                    ticket.place !== null ? lottery.prizes.find((p) => p.id === lottery.id) : null;
+                <Table aria-label="Ваши билеты" className="mt-4">
+                    <TableHeader>
+                        <TableColumn>Номер билета</TableColumn>
+                        <TableColumn>Стоимость</TableColumn>
+                        {new Date() >= new Date(lottery.end) ? (
+                            <>
+                                <TableColumn>Статус</TableColumn>
+                                <TableColumn>Приз</TableColumn>
+                            </>
+                        ) : (
+                            <TableColumn colSpan={2} className="text-center">
+                                Статус и приз
+                            </TableColumn>
+                        )}
+                    </TableHeader>
 
+                    <TableBody>
+                        {lottery.userTickets.map((ticket) => {
+                            if (new Date() < new Date(lottery.end)) {
+                                // Лотерея не завершилась — объединяем колонки в одну с colspan=2
                                 return (
                                     <TableRow key={ticket.number}>
                                         <TableCell>#{ticket.number}</TableCell>
                                         <TableCell>{ticket.price} ₽</TableCell>
-                                        <TableCell>
-                                            {ticket.place !== null ? (
-                                                <Chip color="success" size="sm">
-                                                    Победитель ({ticket.place} место)
-                                                </Chip>
-                                            ) : (
-                                                <Chip color="default" size="sm">
-                                                    Не выиграл
-                                                </Chip>
-                                            )}
+                                        <TableCell colSpan={1} className="text-center">
+                                            Лотерея ещё не завершилась
                                         </TableCell>
-                                        <TableCell>{prize?.title ?? "Вы ничего не выиграли"}</TableCell>
                                     </TableRow>
                                 );
-                            })}
-                        </TableBody>
-                    </Table>
-                )}
-                {new Date() < new Date(lottery.end) && (
-                    <div>
-                        <h1>Выиграли в лотереи</h1>
+                            }
+                            const sortedPrizes = [...lottery.prizes].sort(
+                                (a, b) => b.moneyPrice - a.moneyPrice || b.pointsPrice - a.pointsPrice,
+                            );
+                            const prize =
+                                ticket.place !== null && ticket.place <= sortedPrizes.length
+                                    ? sortedPrizes[ticket.place - 1]
+                                    : null;
+
+                            return (
+                                <TableRow key={ticket.number}>
+                                    <TableCell>#{ticket.number}</TableCell>
+                                    <TableCell>{ticket.price} ₽</TableCell>
+                                    <TableCell>
+                                        {ticket.place !== null ? (
+                                            <Chip color="success" size="sm">
+                                                Победитель
+                                            </Chip>
+                                        ) : (
+                                            <Chip color="default" size="sm">
+                                                Не выиграл
+                                            </Chip>
+                                        )}
+                                    </TableCell>
+                                    <TableCell>{prize?.title ?? "Вы ничего не выиграли"}</TableCell>
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+                {new Date() > new Date(lottery.end) && (
+                    <div className="mt-8">
+                        <h2 className="mb-4 text-xl font-semibold">Победители лотереи</h2>
+                        <Table aria-label="Список победителей">
+                            <TableHeader>
+                                <TableColumn>Участник</TableColumn>
+                                <TableColumn>Контакты</TableColumn>
+                                <TableColumn>Выигранный приз</TableColumn>
+                                <TableColumn>Место</TableColumn>
+                            </TableHeader>
+                            <TableBody>
+                                {winners.map((winner, index) => (
+                                    <TableRow key={winner.number}>
+                                        <TableCell>
+                                            <div className="flex items-center gap-3">
+                                                <Avatar
+                                                    showFallback
+                                                    src="https://images.unsplash.com/broken"
+                                                    name={winner.user.name}
+                                                    isBordered
+                                                    color="primary"
+                                                    size="sm"
+                                                />
+                                                <span>{winner.user.name}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{winner.user.email}</TableCell>
+                                        <TableCell>{prizes[index]?.title ?? "Приз не указан"}</TableCell>
+                                        <TableCell>
+                                            <Chip color="success" size="sm">
+                                                {index + 1} место
+                                            </Chip>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
                     </div>
                 )}
             </div>

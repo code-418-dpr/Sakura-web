@@ -32,7 +32,6 @@ export async function getLotteryPrizes(lotteryId: string) {
     }
     return db.prize.findMany({
         where: { lotteryId },
-        orderBy: { moneyPrice: "desc", pointsPrice: "desc" },
         take: lottery.winnersCount,
     });
 }

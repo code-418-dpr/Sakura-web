@@ -26,9 +26,30 @@ export default function LotteriesTab() {
                         page: userPage,
                         pageSize: perPage,
                     });
-                    console.log("test: ", result);
+
                     if (result) {
-                        setUserLotteriesData(result);
+                        const grouped = result.data.lotteries.reduce<Record<string, typeof result.data.lotteries>>(
+                            (acc, item) => {
+                                const id = item.id;
+                                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                                if (!acc[id]) {
+                                    acc[id] = [];
+                                }
+                                acc[id].push(item);
+                                return acc;
+                            },
+                            {},
+                        );
+                        const groupedArray = Object.values(grouped).map((group) => group[0]);
+                        const newResult = {
+                            ...result,
+                            data: {
+                                ...result.data,
+                                lotteries: groupedArray,
+                            },
+                        };
+
+                        setUserLotteriesData(newResult);
                     }
                 }
             } catch (error) {

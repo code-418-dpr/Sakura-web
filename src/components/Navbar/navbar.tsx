@@ -49,7 +49,7 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
     };
 
     const tabs: PageTab[] = React.useMemo(() => {
-        const baseTabs: PageTab[] = ["sakura", "games"];
+        const baseTabs: PageTab[] = ["sakura", "games", "score"];
         if (user?.role === "ADMIN") {
             return ["admin", ...baseTabs];
         }
@@ -62,6 +62,7 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
             sakura: "Сакура",
             games: "Игры",
             admin: "Админ Панель",
+            score: "Рейтинг",
         } as const;
 
         if (tab in labels) {

@@ -5,6 +5,8 @@ import { PersonalInfo } from "@/app/user-profile/_components/personal-info";
 import { PersonalInfoProps } from "@/lib/user-personal-info-props";
 import { Tab, Tabs } from "@heroui/react";
 
+import LotteriesTab from "./lotteries-tab";
+
 export function ProfileTabs({ user }: PersonalInfoProps) {
     return (
         <div className="flex w-full flex-col pt-4">
@@ -15,6 +17,11 @@ export function ProfileTabs({ user }: PersonalInfoProps) {
                         <div className="space-y-4">
                             <ContactInfo user={user} />
                         </div>
+                    </div>
+                </Tab>
+                <Tab key="lottery" title="Лотереи" className="flex-1 py-4 text-center">
+                    <div className="space-y-4">
+                        <LotteriesTab />
                     </div>
                 </Tab>
                 <Tab key="payment" title="Реквизиты" className="flex-1 py-4 text-center">

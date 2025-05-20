@@ -6,20 +6,21 @@ import { ru } from "date-fns/locale";
 import { useState } from "react";
 
 import ModalOrDrawer from "@/components/modal-or-drawer";
-import { Lottery } from "@/types/lottery";
+import { UserLotteryData } from "@/data/userLottery";
+import { useAuth } from "@/hooks/use-auth";
 import { Card, CardBody, Image, useDisclosure } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
-import LotteryDetails from "./lotteries-details";
+import MyLotteryDetails from "./my-lotteries-details";
 
 interface Props {
-    paginatedData: Lottery[];
+    paginatedData: UserLotteryData["lotteries"][number][];
 }
 
-export default function LotteriesCards({ paginatedData }: Props) {
+export default function MyLotteriesCards({ paginatedData }: Props) {
     const [selected, setSelected] = useState<string | null>(null);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
+    const { user } = useAuth();
     const handleClick = (id: string) => {
         setSelected(id);
         onOpen();
@@ -34,7 +35,7 @@ export default function LotteriesCards({ paginatedData }: Props) {
                     onOpenChangeAction={onOpenChange}
                     size="3xl"
                 >
-                    <LotteryDetails loteryId={selected} />
+                    <MyLotteryDetails userId={user?.id} loteryId={selected} />
                 </ModalOrDrawer>
             )}
             {paginatedData.map((e) => {
@@ -63,6 +64,16 @@ export default function LotteriesCards({ paginatedData }: Props) {
                                         <p className="mx-2 text-sm font-bold">Даты проведения:</p>
                                         <p>
                                             {start} — {end}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex items-center pt-2">
+                                        <Icon icon="fluent:animal-cat-16-regular" className="h-5 w-5" />
+                                        <p className="mx-2 text-sm font-bold">
+                                            Тип:
+                                            <span className="text-foreground/50 m-1">
+                                                {e.type === "REAL" ? "Реальная" : "Виртуальная"}
+                                            </span>
                                         </p>
                                     </div>
 

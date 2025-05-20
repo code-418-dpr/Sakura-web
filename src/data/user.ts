@@ -35,6 +35,7 @@ export const updateUser = async (id: string, realBalance: number, virtualBalance
         data: {
             realBalance: BigInt(Math.round(realBalance)),
             virtualBalance: BigInt(Math.round(virtualBalance)),
+            lastActivity: new Date(),
         },
     });
 };

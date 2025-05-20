@@ -37,7 +37,7 @@ interface NavbarProps {
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: PageTab[] = ["catalog"];
+    const tabs: PageTab[] = ["catalog", "sakura", "games"];
     const { isOpen: isAuthOpen, onOpen: onAuthOpen, onOpenChange: onAuthOpenChange } = useDisclosure();
     const { isOpen: isReferalOpen, onOpen: onReferalOpen, onOpenChange: onReferalOpenChange } = useDisclosure();
     const { user, isLoading, isAuthenticated } = useAuth();
@@ -50,7 +50,9 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
 
     const getTabLabel = (tab: PageTab): string => {
         const labels = {
-            catalog: "Каталог",
+            catalog: "Лотереи",
+            sakura: "Сакура",
+            games: "Игры",
         } as const;
 
         if (tab in labels) {

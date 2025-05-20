@@ -9,6 +9,8 @@ declare module "next-auth" {
         id: string;
         realBalance: string;
         virtualBalance: string;
+        lastActivity: Date;
+        isVip: boolean;
     }
 
     interface Session {
@@ -20,6 +22,8 @@ declare module "next-auth" {
             role: UserRole;
             realBalance: string;
             virtualBalance: string;
+            lastActivity: Date;
+            isVip: boolean;
         };
     }
 }
@@ -31,5 +35,7 @@ declare module "next-auth/jwt" {
         name: string;
         realBalance: string;
         virtualBalance: string;
+        lastActivity: Date;
+        isVip: boolean;
     }
 }

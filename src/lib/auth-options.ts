@@ -28,7 +28,11 @@ export const authOptions: NextAuthOptions = {
                     if (!user || !(await bcrypt.compare(credentials.password, user.password))) {
                         return null;
                     }
-
+                    const isVipActive = user.vipDatetime
+                        ? new Date(user.vipDatetime) > new Date()
+                            ? true
+                            : false
+                        : false;
                     return {
                         id: user.id,
                         name: user.name,
@@ -36,6 +40,8 @@ export const authOptions: NextAuthOptions = {
                         role: user.role,
                         realBalance: String(user.realBalance),
                         virtualBalance: String(user.virtualBalance),
+                        lastActivity: user.lastActivity,
+                        isVip: isVipActive,
                     };
                 } catch (error) {
                     console.error("Auth error:", error);
@@ -52,6 +58,8 @@ export const authOptions: NextAuthOptions = {
                 token.role = user.role as UserRole;
                 token.realBalance = user.realBalance;
                 token.virtualBalance = user.virtualBalance;
+                token.lastActivity = user.lastActivity;
+                token.isVip = user.isVip;
             }
             return token;
         },
@@ -66,6 +74,8 @@ export const authOptions: NextAuthOptions = {
             session.user.name = token.name;
             session.user.realBalance = dbUser?.realBalance.toString() ?? token.realBalance;
             session.user.virtualBalance = dbUser?.virtualBalance.toString() ?? token.virtualBalance;
+            session.user.lastActivity = token.lastActivity;
+            session.user.isVip = token.isVip;
             return session;
         },
         redirect({ url, baseUrl }) {

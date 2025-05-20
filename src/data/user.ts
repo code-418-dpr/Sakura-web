@@ -9,6 +9,15 @@ import { User } from "@/types/user";
 export const getUsers = async (): Promise<User[]> => {
     return db.user.findMany();
 };
+
+export const getSoreUsers = async (): Promise<User[]> => {
+    return db.user.findMany({
+        orderBy: {
+            score: "desc", // сортировка по убыванию
+        },
+        take: 20, // ограничение количества записей
+    });
+};
 export const getUserByEmail = async (email: string) => {
     return db.user.findUnique({ where: { email } });
 };

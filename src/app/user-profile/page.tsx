@@ -26,8 +26,6 @@ export default function UserProfilePage() {
 
     const [isLoading, setIsLoading] = useState(true);
 
-    console.log(user);
-
     useEffect(() => {
         const fetchUserData = async () => {
             if (user?.email) {

@@ -3,6 +3,8 @@
 import prisma from "@/lib/prisma";
 import { LotteryRequestData } from "@/types/lottery-request-data";
 
+import { UserLotteryData } from "./userLottery";
+
 interface SearchLotteriesParams {
     query?: string;
     start?: Date;
@@ -16,7 +18,19 @@ interface SearchLotteriesParams {
     page?: number;
     pageSize?: number;
 }
-
+interface PaginationParams {
+    page?: number;
+    pageSize?: number;
+}
+export interface PaginatedResult<T> {
+    data: T;
+    pagination: {
+        page: number;
+        pageSize: number;
+        totalItems: number;
+        totalPages: number;
+    };
+}
 export async function searchLotteries(params: SearchLotteriesParams) {
     const {
         query,
@@ -83,7 +97,92 @@ export const getLotteryById = async (id: string) => {
         image: response?.image ? Buffer.from(response.image).toString("base64") : null,
     };
 };
+export const getUserLotteryData = async (
+    userId: string,
+    params?: PaginationParams,
+): Promise<PaginatedResult<UserLotteryData> | null> => {
+    try {
+        const page = params?.page ?? 1;
+        const pageSize = params?.pageSize ?? 10;
+        const skip = (page - 1) * pageSize;
 
+        // Получаем общее количество билетов пользователя
+        const totalItems = await prisma.ticket.count({
+            where: { userId },
+        });
+
+        const userWithData = await prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                tickets: {
+                    select: {
+                        number: true,
+                        price: true,
+                        place: true,
+                        lottery: {
+                            select: {
+                                id: true,
+                                title: true,
+                                description: true,
+                                isReal: true,
+                                image: true,
+                                start: true,
+                                end: true,
+                                prizes: {
+                                    select: {
+                                        id: true,
+                                        title: true,
+                                        moneyPrice: true,
+                                        pointsPrice: true,
+                                        count: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    skip,
+                    take: pageSize,
+                },
+            },
+        });
+
+        if (!userWithData) return null;
+
+        const totalPages = Math.ceil(totalItems / pageSize);
+
+        return {
+            data: {
+                userId: userWithData.id,
+                lotteries: userWithData.tickets.map((ticket) => ({
+                    ...ticket.lottery,
+                    type: ticket.lottery.isReal ? "REAL" : "VIRTUAL",
+                    image: ticket.lottery.image ? Buffer.from(ticket.lottery.image).toString("base64") : null,
+                    userTicket: {
+                        number: ticket.number,
+                        price: Number(ticket.price),
+                        place: ticket.place,
+                    },
+                    prizes: ticket.lottery.prizes.map((prize) => ({
+                        ...prize,
+                        moneyPrice: Number(prize.moneyPrice),
+                        pointsPrice: Number(prize.pointsPrice),
+                    })),
+                })),
+                start: "",
+            },
+            pagination: {
+                page: page,
+                pageSize,
+                totalItems,
+                totalPages,
+            },
+        };
+    } catch (error) {
+        console.error("Error fetching user lottery data:", error);
+        throw new Error("Failed to fetch user lottery information");
+    }
+};
 export const getLotteryByTitle = async (title: string) => {
     return prisma.lottery.findFirst({ where: { title: { equals: title } } });
 };

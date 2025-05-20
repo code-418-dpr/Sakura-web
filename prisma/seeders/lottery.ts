@@ -54,6 +54,7 @@ export async function seedLotteries() {
                 start: start as Date,
                 end: end as Date,
                 rules: rules,
+                prizes: [],
             };
             await createLottery(requestData);
         }

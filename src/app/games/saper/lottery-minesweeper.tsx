@@ -64,8 +64,8 @@ export const LotteryMinesweeper: React.FC = () => {
     // Initialize game
     function initializeGame(bet: number): GameState {
         const totalTiles = TOTAL_TILES;
-        const totalBombs = Math.floor(totalTiles * 0.9);
-        const totalEmpty = Math.floor(totalTiles * 0.1);
+        const totalBombs = Math.floor(totalTiles * 0.3);
+        const totalEmpty = Math.floor(totalTiles * 0.2);
 
         const indices = Array.from({ length: totalTiles }, (_, i) => i);
         const shuffled = indices.sort(() => Math.random() - 0.5);

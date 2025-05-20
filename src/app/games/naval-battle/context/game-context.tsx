@@ -21,7 +21,7 @@ export const ROW_LABELS = ["A", "B", "C", "D", "F", "G", "H", "I", "J", "K"];
 
 // Генерация пустой доски 10×10 с типом CellState[][]
 const createEmptyBoard = (): Board =>
-    Array.from<CellState[]>({ length: ROWS }, () => Array.from<CellState>({ length: COLS }, () => "empty"));
+    Array.from({ length: ROWS }, () => Array.from({ length: COLS }, (): CellState => "empty")) as Board;
 
 const isValidPlacement = (board: Board, size: number, row: number, col: number, orientation: Orientation): boolean => {
     if ((orientation === "horizontal" && col + size > COLS) || (orientation === "vertical" && row + size > ROWS)) {

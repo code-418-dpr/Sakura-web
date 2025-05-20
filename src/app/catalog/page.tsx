@@ -8,7 +8,7 @@ import LotteriesView from "@/components/lotteries/lotteries-view";
 import { PageTab } from "@/types/tabs";
 
 export default function CatalogPage() {
-    const [activeTab, setActiveTab] = useState<PageTab>("main");
+    const [activeTab, setActiveTab] = useState<PageTab>("catalog");
 
     return (
         <>

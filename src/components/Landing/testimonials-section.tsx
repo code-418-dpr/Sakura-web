@@ -1,7 +1,5 @@
 import { motion, useInView } from "framer-motion";
-
 import React, { useRef } from "react";
-
 import { Avatar, Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
@@ -57,8 +55,7 @@ const TestimonialsSection: React.FC = () => {
                         Что о нас говорят наши игроки
                     </h2>
                     <p className="text-foreground-500 mx-auto max-w-2xl">
-                        Не верьте нам на слово. Расскажите о нашем сообществе игроков, которые почувствовали разницу с
-                        Sakura.
+                        Не верьте нам на слово — послушайте тех, кто уже выиграл вместе с Sakura.
                     </p>
                 </motion.div>
 
@@ -81,10 +78,16 @@ const TestimonialsSection: React.FC = () => {
                             <Card className="border-divider h-full overflow-hidden border">
                                 <CardBody className="from-content1 to-content2 bg-gradient-to-br p-6">
                                     <div className="mb-4 flex items-start">
-                                        <Avatar src={testimonial.avatar} size="lg" className="mr-4" />
+                                        <Avatar
+                                            src={testimonial.avatar}
+                                            size="lg"
+                                            className="mr-4"
+                                        />
                                         <div className="flex-grow">
                                             <h3 className="font-semibold">{testimonial.name}</h3>
-                                            <p className="text-foreground-500 text-sm">{testimonial.role}</p>
+                                            <p className="text-foreground-500 text-sm">
+                                                {testimonial.role}
+                                            </p>
                                             <div className="mt-1 flex">
                                                 {Array.from({ length: 5 }).map((_, i) => (
                                                     <motion.span
@@ -99,10 +102,14 @@ const TestimonialsSection: React.FC = () => {
                                                         }}
                                                     >
                                                         <Icon
-                                                            icon="lucide:star"
+                                                            icon={
+                                                                i < testimonial.rating
+                                                                    ? "bi:star-fill"
+                                                                    : "bi:star"
+                                                            }
                                                             className={`${
                                                                 i < testimonial.rating
-                                                                    ? "from-primary-500 to-secondary-500 bg-gradient-to-r bg-clip-text fill-current text-transparent"
+                                                                    ? "text-yellow-400"
                                                                     : "text-foreground-300"
                                                             } text-lg`}
                                                         />

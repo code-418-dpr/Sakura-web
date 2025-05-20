@@ -52,7 +52,7 @@ export default function Hero({ onOpen }: HeroProps) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                        <h1 className="from-primary-500 via-primary-400 to-secondary-500 mb-6 bg-gradient-to-r bg-clip-text text-4xl font-bold text-transparent md:text-5xl lg:text-6xl">
+                        <h1 className="from-primary-500 via-primary-400 to-secondary-500 mb-6 bg-gradient-to-r bg-clip-text text-transparent text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
                             {heroData.title}
                         </h1>
                         <p className="text-foreground-600 mb-8 text-lg md:text-xl">{heroData.description}</p>

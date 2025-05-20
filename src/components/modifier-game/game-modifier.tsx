@@ -11,7 +11,7 @@ const GAME_CONFIG = {
     minBet: 1, // Минимальная ставка
     maxBet: 10000, // Максимальная ставка
     initialBalance: 5000, // Начальный баланс
-    baseChance: 0.9, // 99% - шанс продолжить
+    baseChance: 1.1, // 99% - шанс продолжить
     minMultiplier: 0.1, // Минимальный множитель
     maxMultiplier: 3.0, // Максимальный множитель
     updateInterval: 50, // ms между обновлениями - настроено для более быстрого, но все еще кликабельного интерфейса
@@ -308,7 +308,7 @@ export const ModifierGame: React.FC = () => {
                 <div className="flex flex-col gap-6">
                     {/* Заголовок */}
                     <div className="flex items-center justify-between">
-                        <h1 className="text-foreground text-2xl font-bold">Модификатор</h1>
+                        <h1 className="text-foreground text-2xl font-bold">Катящаяся бочка</h1>
                         <div className="flex items-center gap-2">
                             <Icon icon="lucide:wallet" className="text-primary" />
                             <span className="text-lg font-semibold">{formatCurrency(state.balance)}</span>

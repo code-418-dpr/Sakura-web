@@ -4,7 +4,11 @@ import bcrypt from "bcryptjs";
 
 import { UserRole } from "@/app/generated/prisma";
 import db from "@/lib/prisma";
+import { User } from "@/types/user";
 
+export const getUsers = async (): Promise<User[]> => {
+    return db.user.findMany();
+};
 export const getUserByEmail = async (email: string) => {
     return db.user.findUnique({ where: { email } });
 };

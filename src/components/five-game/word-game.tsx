@@ -11,6 +11,7 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
+    addToast,
     useDisclosure,
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
@@ -93,8 +94,13 @@ export const WordGame: React.FC = () => {
         if (gameState.currentGuess.length !== 5) return;
 
         if (!wordList.includes(gameState.currentGuess.toLowerCase())) {
-            // Word not in list
-            alert("Word not in list");
+            addToast({
+                title: "Не верное слово",
+                description: "Введённого слова не существует",
+                color: "warning",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+            });
             return;
         }
 

@@ -2,10 +2,9 @@
 
 import { useRouter } from "next/navigation";
 
+import { useAuth } from "@/hooks/use-auth";
 import { Game } from "@/types/game";
 import { Badge, Card, CardBody, Image, addToast } from "@heroui/react";
-
-// import {useAuth} from "@/hooks/use-auth";
 
 interface Props {
     paginatedData: Game[];
@@ -13,7 +12,7 @@ interface Props {
 
 export default function GamesCards({ paginatedData }: Props) {
     const router = useRouter();
-    // const {user} = useAuth();
+    const { user } = useAuth();
 
     return (
         <>
@@ -22,7 +21,7 @@ export default function GamesCards({ paginatedData }: Props) {
                     <div
                         key={e.id}
                         onClick={() => {
-                            if (e.isForVip) {
+                            if (e.isForVip && user?.isVip) {
                                 addToast({
                                     title: "Отказ в доступе",
                                     description: "Для доступа к этой игре приобретите VIP статус",

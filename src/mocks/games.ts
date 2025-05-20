@@ -57,4 +57,12 @@ export const games: Game[] = [
         pageUrl: "tree-round",
         isForVip: false,
     },
+    {
+        id: "9",
+        title: "Кубики",
+        description: "Отгадайте загаданное число и получите приз",
+        imageUrl: "https://avatars.mds.yandex.net/i?id=fb1c1cf29ca8f31b0d0fb2a1b35e1944_l-12473832-images-thumbs&n=13",
+        pageUrl: "dice-roll",
+        isForVip: false,
+    },
 ];

@@ -81,8 +81,8 @@ export const LotteryMinesweeper: React.FC = () => {
         clickedTile.revealed = true;
 
         let updatedScore = gameState.currentRoundScore;
-        let gameOver = gameState.gameOver;
-        let gameWon = gameState.gameWon;
+        let gameOver: boolean = gameState.gameOver;
+        let gameWon: boolean = gameState.gameWon;
         const revealedCount = gameState.revealedCount + 1;
 
         if (clickedTile.hasBomb) {

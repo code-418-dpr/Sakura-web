@@ -1,1 +1,1 @@
-export type PageTab = "main" | "catalog" | "sakura";
+export type PageTab = "main" | "catalog" | "sakura" | "games";

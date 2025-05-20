@@ -81,8 +81,8 @@ export const LotteryMinesweeper: React.FC = () => {
         clickedTile.revealed = true;
 
         let updatedScore = gameState.currentRoundScore;
-        let gameOver = gameState.gameOver;
-        let gameWon = gameState.gameWon;
+        let gameOver: boolean = gameState.gameOver;
+        let gameWon: boolean = gameState.gameWon;
         const revealedCount = gameState.revealedCount + 1;
 
         if (clickedTile.hasBomb) {
@@ -132,7 +132,7 @@ export const LotteryMinesweeper: React.FC = () => {
     const progressPercentage = (gameState.revealedCount / MAX_REVEALS) * 100;
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex w-9/10 flex-col gap-4 md:w-1/3">
             {/* Game stats */}
             <div className="mb-2 flex items-center justify-between">
                 <div className="flex flex-col">

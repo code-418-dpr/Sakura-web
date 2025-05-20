@@ -5,7 +5,7 @@ import { motion, useAnimation } from "framer-motion";
 import React, { useState } from "react";
 
 import Confetti from "@/components/Confetti";
-import PrizeDisplay from "@/components/PrizeDisplay";
+import { PrizeDisplay } from "@/components/PrizeDisplay";
 import { Button, Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
 

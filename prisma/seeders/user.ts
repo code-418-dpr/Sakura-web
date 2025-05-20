@@ -1,4 +1,4 @@
-import { Prisma } from "@/app/generated/prisma";
+import { Prisma, UserRole } from "@/app/generated/prisma";
 import { createUser, getUserByEmail } from "@/data/user";
 
 const USERS: Prisma.UserCreateInput[] = [
@@ -12,7 +12,7 @@ const USERS: Prisma.UserCreateInput[] = [
         virtualBalance: 1000,
         score: 0,
         lastActivity: new Date(),
-        role: "ADMIN",
+        role: "ADMIN" as UserRole,
     },
     {
         name: "Vlad",

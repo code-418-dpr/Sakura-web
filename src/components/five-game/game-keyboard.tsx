@@ -8,45 +8,44 @@ type LetterState = "correct" | "present" | "absent" | "empty";
 
 // Пропсы для клавиатуры
 interface GameKeyboardProps {
-    onKeyPress: (key: string) => void; // Обработчик нажатия клавиш
-    letterStates: Record<string, LetterState>; // Состояния букв
+    onKeyPress: (key: string) => void;
+    letterStates: Record<string, LetterState>;
 }
 
 export const GameKeyboard: React.FC<GameKeyboardProps> = ({ onKeyPress, letterStates }) => {
-    // Раскладка клавиатуры
+    // Полная раскладка клавиатуры
     const keyboardRows = [
-        ["й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з"],
-        ["ф", "ы", "в", "а", "п", "р", "о", "л", "д"],
-        ["Enter", "я", "ч", "с", "м", "и", "т", "ь", "Backspace"],
+        ["й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з", "х"],
+        ["ф", "ы", "в", "а", "п", "р", "о", "л", "д", "ж", "э"],
+        ["Enter", "я", "ч", "с", "м", "и", "т", "ь", "б", "ю", "Backspace"],
     ];
 
-    // Получить стиль кнопки в зависимости от состояния буквы
     const getKeyStyle = (key: string) => {
-        if (key === "Enter" || key === "Backspace") {
+        const lower = key.toLowerCase();
+        if (lower === "enter" || lower === "backspace") {
             return "bg-default-100";
         }
-
-        switch (letterStates[key]) {
-            case "correct": // Буква на правильном месте
+        switch (letterStates[lower]) {
+            case "correct":
                 return "bg-success-500 text-white";
-            case "present": // Буква есть в слове, но не на своём месте
+            case "present":
                 return "bg-warning-500 text-black";
-            case "absent": // Буквы нет в слове
+            case "absent":
                 return "bg-default-300";
-            default: // Не проверенная буква
+            default:
                 return "bg-default-100";
         }
     };
 
     return (
-        <div className="mx-auto w-full max-w-md">
-            {keyboardRows.map((row, rowIndex) => (
-                <div key={rowIndex} className="my-1 flex justify-center gap-1">
+        <div className="w-full px-2">
+            {keyboardRows.map((row, i) => (
+                <div key={i} className="my-1 flex justify-center gap-1">
                     {row.map((key) => (
                         <Button
                             key={key}
                             size="sm"
-                            className={`h-12 min-w-[36px] font-medium ${getKeyStyle(key.toLowerCase())}`}
+                            className={`h-12 min-w-[36px] font-medium ${getKeyStyle(key)}`}
                             onPress={() => {
                                 onKeyPress(key);
                             }}

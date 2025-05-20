@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import {
     Button,
@@ -50,11 +50,11 @@ interface GameState {
 }
 
 export const WordGame: React.FC = () => {
-    const [gameState, setGameState] = React.useState<GameState>(() => ({
+    const [gameState, setGameState] = useState<GameState>(() => ({
         targetWord: getRandomWord(),
         currentAttempt: 0,
         currentGuess: "",
-        guesses: Array(MAX_ATTEMPTS).fill("") as string[],
+        guesses: Array<string>(MAX_ATTEMPTS).fill(""),
         gameStatus: "playing",
         letterStates: {},
         score: 0,
@@ -68,96 +68,108 @@ export const WordGame: React.FC = () => {
         return wordList[Math.floor(Math.random() * wordList.length)].toLowerCase();
     }
 
-    // Обработка нажатия клавиш
-    const handleKeyPress = (key: string) => {
-        if (gameState.gameStatus !== "playing") return;
-        if (key === "Enter") {
-            submitGuess();
-        } else if (key === "Backspace") {
-            if (gameState.currentGuess.length > 0) {
-                setGameState((prev) => ({
-                    ...prev,
-                    currentGuess: prev.currentGuess.slice(0, -1),
-                }));
+    // Отправить текущее предположение (устойчивый колбэк)
+    const submitGuess = useCallback(() => {
+        setGameState((prev) => {
+            if (prev.currentGuess.length !== 5) {
+                return prev;
             }
-        } else if (/^[а-яёa-z]$/i.test(key) && gameState.currentGuess.length < 5) {
-            setGameState((prev) => ({
-                ...prev,
-                currentGuess: prev.currentGuess + key.toLowerCase(),
-            }));
-        }
-    };
-
-    // Отправить текущее предположение
-    const submitGuess = () => {
-        if (gameState.currentGuess.length !== 5) return;
-        if (!wordList.includes(gameState.currentGuess.toLowerCase())) {
-            addToast({
-                title: "Неверное слово",
-                description: "Введённого слова не существует",
-                color: "warning",
-                timeout: 3000,
-                shouldShowTimeoutProgress: true,
-            });
-            return;
-        }
-
-        const newGuesses = [...gameState.guesses];
-        newGuesses[gameState.currentAttempt] = gameState.currentGuess;
-
-        // Проверить, угадано ли слово
-        const isCorrect = gameState.currentGuess.toLowerCase() === gameState.targetWord;
-
-        // Расчёт состояния букв
-        const newLetterStates = { ...gameState.letterStates };
-        for (const letter of gameState.currentGuess) {
-            newLetterStates[letter.toLowerCase()] = "absent";
-        }
-
-        // Сначала проверяем буквы на правильных позициях
-        for (let i = 0; i < gameState.currentGuess.length; i++) {
-            const letter = gameState.currentGuess[i].toLowerCase();
-            if (letter === gameState.targetWord[i]) {
-                newLetterStates[letter] = "correct";
+            if (!wordList.includes(prev.currentGuess.toLowerCase())) {
+                addToast({
+                    title: "Неверное слово",
+                    description: "Введённого слова не существует",
+                    color: "warning",
+                    timeout: 3000,
+                    shouldShowTimeoutProgress: true,
+                });
+                return prev;
             }
-        }
 
-        // Затем проверяем наличие букв в другом месте
-        for (let i = 0; i < gameState.currentGuess.length; i++) {
-            const letter = gameState.currentGuess[i].toLowerCase();
-            if (letter !== gameState.targetWord[i] && gameState.targetWord.includes(letter)) {
-                if (newLetterStates[letter] !== "correct") {
-                    newLetterStates[letter] = "present";
+            const newGuesses = [...prev.guesses];
+            newGuesses[prev.currentAttempt] = prev.currentGuess;
+
+            // Маркируем все буквы как absent
+            const newLetterStates = { ...prev.letterStates };
+            for (const ch of prev.currentGuess) {
+                newLetterStates[ch] = "absent";
+            }
+            // Отмечаем correct
+            for (let i = 0; i < prev.currentGuess.length; i++) {
+                const l = prev.currentGuess[i];
+                if (l === prev.targetWord[i]) {
+                    newLetterStates[l] = "correct";
                 }
             }
-        }
+            // Отмечаем present
+            for (let i = 0; i < prev.currentGuess.length; i++) {
+                const l = prev.currentGuess[i];
+                if (l !== prev.targetWord[i] && prev.targetWord.includes(l)) {
+                    if (newLetterStates[l] !== "correct") {
+                        newLetterStates[l] = "present";
+                    }
+                }
+            }
 
-        // Начисление очков
-        let earnedPoints = 0;
-        if (isCorrect) {
-            const attemptNumber = gameState.currentAttempt + 1;
-            const multiplier = POINTS_MULTIPLIER[attemptNumber as keyof typeof POINTS_MULTIPLIER] || 1;
-            earnedPoints = BASE_POINTS * multiplier;
-        }
+            const nextAttempt = prev.currentAttempt + 1;
+            const isCorrect = prev.currentGuess === prev.targetWord;
+            const multiplier = POINTS_MULTIPLIER[nextAttempt as keyof typeof POINTS_MULTIPLIER] || 1;
+            const earned = isCorrect ? BASE_POINTS * multiplier : 0;
 
-        setGameState((prev) => ({
-            ...prev,
-            guesses: newGuesses,
-            currentGuess: "",
-            currentAttempt: prev.currentAttempt + 1,
-            gameStatus: isCorrect ? "won" : prev.currentAttempt + 1 >= MAX_ATTEMPTS ? "lost" : "playing",
-            letterStates: newLetterStates,
-            score: earnedPoints,
-            totalScore: prev.totalScore + earnedPoints,
-        }));
+            const nextState: GameState = {
+                ...prev,
+                guesses: newGuesses,
+                currentGuess: "",
+                currentAttempt: nextAttempt,
+                gameStatus: isCorrect ? "won" : nextAttempt >= MAX_ATTEMPTS ? "lost" : "playing",
+                letterStates: newLetterStates,
+                score: earned,
+                totalScore: prev.totalScore + earned,
+            };
 
-        // Открыть модальное окно, если игра закончена
-        if (isCorrect || gameState.currentAttempt + 1 >= MAX_ATTEMPTS) {
-            setTimeout(() => {
-                onOpen();
-            }, 1000);
-        }
-    };
+            if (isCorrect || nextAttempt >= MAX_ATTEMPTS) {
+                setTimeout(onOpen, 1000);
+            }
+
+            return nextState;
+        });
+    }, [onOpen]);
+
+    // Обработка нажатия клавиш (устойчивый колбэк)
+    const handleKeyPress = useCallback(
+        (key: string) => {
+            setGameState((prev) => {
+                if (prev.gameStatus !== "playing") {
+                    return prev;
+                }
+                if (key === "Enter") {
+                    submitGuess();
+                    return prev;
+                }
+                if (key === "Backspace") {
+                    if (prev.currentGuess.length > 0) {
+                        return { ...prev, currentGuess: prev.currentGuess.slice(0, -1) };
+                    }
+                    return prev;
+                }
+                if (/^[а-яёa-z]$/i.test(key) && prev.currentGuess.length < 5) {
+                    return { ...prev, currentGuess: prev.currentGuess + key.toLowerCase() };
+                }
+                return prev;
+            });
+        },
+        [submitGuess],
+    );
+
+    // Вешаем глобальный слушатель один раз
+    useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            handleKeyPress(e.key);
+        };
+        window.addEventListener("keydown", handler);
+        return () => {
+            window.removeEventListener("keydown", handler);
+        };
+    }, [handleKeyPress]);
 
     // Начать новую игру
     const startNewGame = () => {
@@ -166,30 +178,13 @@ export const WordGame: React.FC = () => {
             targetWord: getRandomWord(),
             currentAttempt: 0,
             currentGuess: "",
-            guesses: Array(MAX_ATTEMPTS).fill("") as string[],
+            guesses: Array<string>(MAX_ATTEMPTS).fill(""),
             gameStatus: "playing",
             letterStates: {},
             score: 0,
         }));
         onClose();
     };
-
-    // Обработка физической клавиатуры
-    React.useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Enter") {
-                submitGuess();
-            } else if (e.key === "Backspace") {
-                handleKeyPress("Backspace");
-            } else if (/^[а-яёa-z]$/i.test(e.key)) {
-                handleKeyPress(e.key);
-            }
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => {
-            window.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [gameState, handleKeyPress, submitGuess]);
 
     return (
         <div className="flex w-full max-w-md flex-col items-center">
@@ -230,7 +225,6 @@ export const WordGame: React.FC = () => {
                 </CardFooter>
             </Card>
 
-            {/* Модальное окно результатов */}
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1">

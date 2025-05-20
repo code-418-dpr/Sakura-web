@@ -4,30 +4,98 @@ import { motion } from "framer-motion";
 
 import React, { useEffect, useRef, useState } from "react";
 
-import { scratchCardPrizes } from "@/app/games/data/prizes";
+import { useRouter } from "next/navigation";
+
 import Confetti from "@/components/Confetti";
-import PrizeDisplay from "@/components/PrizeDisplay";
-import { Button, Card, CardBody } from "@heroui/react";
+import { PrizeDisplay } from "@/components/PrizeDisplay";
+import { updateUser } from "@/data/user";
+import { useAuth } from "@/hooks/use-auth";
+import { Button, Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 const ScratchCard: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const revealedRef = useRef(false);
-
-    const [prize, setPrize] = useState<string | null>(null);
+    const router = useRouter();
+    const { user, update: updateAuth } = useAuth();
+    const [bonusAmount, setBonusAmount] = useState(0);
     const [showPrize, setShowPrize] = useState(false);
     const [isScratching, setIsScratching] = useState(false);
     const [percentScratched, setPercentScratched] = useState(0);
     const [showConfetti, setShowConfetti] = useState(false);
+    const [showCooldownModal, setShowCooldownModal] = useState(false);
+    const [remainingTime, setRemainingTime] = useState("");
+    const [shouldRedirect, setShouldRedirect] = useState(false);
+    useEffect(() => {
+        const lastPlayed = localStorage.getItem("scratch_last_played");
+        if (lastPlayed) {
+            const lastTime = parseInt(lastPlayed, 10);
+            const currentTime = Date.now();
+
+            if (currentTime - lastTime < 86400000) {
+                setShowCooldownModal(true);
+                startCooldownTimer(lastTime);
+            }
+        }
+    }, []);
+    useEffect(() => {
+        if (shouldRedirect) {
+            router.push("/games");
+        }
+    }, [router, shouldRedirect]);
+    const checkCooldown = () => {
+        const lastPlayed = localStorage.getItem("scratch_last_played");
+        if (!lastPlayed) return false;
+
+        const lastTime = parseInt(lastPlayed, 10);
+        const currentTime = Date.now();
+        return currentTime - lastTime < 86400000;
+    };
+    const handleCloseCooldownModal = () => {
+        if (!checkCooldown()) {
+            router.push("/games");
+        }
+        setShowCooldownModal(false);
+    };
+    useEffect(() => {
+        if (showPrize) {
+            void handleScratchComplete();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showPrize]);
+    useEffect(() => {
+        if (checkCooldown()) {
+            const lastTime = parseInt(localStorage.getItem("scratch_last_played")!, 10);
+            setShowCooldownModal(true);
+            startCooldownTimer(lastTime);
+        }
+    }, []);
+    const startCooldownTimer = (lastTime: number) => {
+        const interval = setInterval(() => {
+            const currentTime = Date.now();
+            const diff = currentTime - lastTime;
+
+            if (diff >= 86400000) {
+                localStorage.removeItem("scratch_last_played");
+                setShowCooldownModal(false);
+                clearInterval(interval);
+            } else {
+                const remaining = 86400000 - diff;
+                const hours = Math.floor(remaining / 3600000);
+                const minutes = Math.floor((remaining % 3600000) / 60000);
+                const seconds = Math.floor((remaining % 60000) / 1000);
+                setRemainingTime(`${hours}ч ${minutes}м ${seconds}с`);
+            }
+        }, 1000);
+    };
 
     useEffect(() => {
-        const randomIndex = Math.floor(Math.random() * scratchCardPrizes.length);
-        setPrize(scratchCardPrizes[randomIndex]);
+        setBonusAmount(Math.floor(Math.random() * 70) + 5);
     }, []);
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        if (!canvas || !prize) return;
+        if (!canvas || !bonusAmount) return;
 
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
@@ -162,20 +230,46 @@ const ScratchCard: React.FC = () => {
             canvas.removeEventListener("touchmove", handleTouchMove);
             canvas.removeEventListener("touchend", handleTouchEnd);
         };
-    }, [prize]);
-
+    }, [bonusAmount]);
+    const handleScratchComplete = async () => {
+        try {
+            await updateUser(user!.id, Number(user!.realBalance), Number(user!.virtualBalance) + bonusAmount);
+            await updateAuth();
+            localStorage.setItem("scratch_last_played", Date.now().toString());
+            setShowConfetti(true);
+            setShowPrize(true);
+        } catch (error) {
+            console.error("Ошибка обновления баланса:", error);
+        }
+    };
     const resetCard = () => {
+        if (showCooldownModal) return;
+
         revealedRef.current = false;
         setShowPrize(false);
         setPercentScratched(0);
         setShowConfetti(false);
-
-        const randomIndex = Math.floor(Math.random() * scratchCardPrizes.length);
-        setPrize(scratchCardPrizes[randomIndex]);
+        setBonusAmount(Math.floor(Math.random() * 70) + 5);
     };
 
     return (
         <div className="flex flex-col items-center">
+            <Modal isOpen={showCooldownModal} hideCloseButton>
+                <ModalContent>
+                    <ModalHeader>Пожалуйста, подождите</ModalHeader>
+                    <ModalBody>
+                        <p className="text-center">
+                            Вы сможете сыграть снова через: <br />
+                            <span className="text-primary font-bold">{remainingTime}</span>
+                        </p>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button fullWidth color="primary" onPress={handleCloseCooldownModal}>
+                            Вернуться к играм
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -199,8 +293,8 @@ const ScratchCard: React.FC = () => {
                             <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-white">
                                 <div className="p-4 text-center">
                                     <Icon icon="lucide:gift" className="text-primary mb-2 text-4xl" />
-                                    <h3 className="text-primary mb-2 text-2xl font-bold">Your Prize</h3>
-                                    <p className="text-xl">{prize}</p>
+                                    <h3 className="text-primary mb-2 text-2xl font-bold">Твоой приз</h3>
+                                    <p className="text-xl">{bonusAmount}</p>
                                 </div>
                             </div>
 
@@ -227,8 +321,9 @@ const ScratchCard: React.FC = () => {
                                 color="primary"
                                 onPress={resetCard}
                                 startContent={<Icon icon="lucide:refresh-cw" />}
+                                isDisabled={showCooldownModal}
                             >
-                                New Card
+                                Новая карта
                             </Button>
                         </div>
                     </CardBody>
@@ -237,9 +332,15 @@ const ScratchCard: React.FC = () => {
 
             <Confetti active={showConfetti} />
             <PrizeDisplay
-                prize={showPrize ? prize : null}
+                prize={showPrize ? `${bonusAmount} бонусов` : null}
                 onClose={() => {
                     setShowPrize(false);
+                    if (checkCooldown()) {
+                        setShowCooldownModal(true);
+                        startCooldownTimer(Date.now());
+                    } else {
+                        setShouldRedirect(true);
+                    }
                 }}
             />
         </div>

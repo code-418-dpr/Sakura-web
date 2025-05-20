@@ -8,6 +8,7 @@ import NavbarElement from "@/components/Navbar/navbar";
 import ModalOrDrawer from "@/components/modal-or-drawer";
 import PaymentFormForVIPorBalance from "@/components/payment-methods-for-vip-balance";
 import { getUserByEmail } from "@/data/user";
+import { getLevelOfUser } from "@/data/user-level";
 import { useAuth } from "@/hooks/use-auth";
 import { PageTab } from "@/types/tabs";
 import { User } from "@/types/user";
@@ -21,6 +22,7 @@ export default function UserProfilePage() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { isOpen: isVipOpen, onOpen: onVipOpen, onOpenChange: onVipOpenChange } = useDisclosure();
     const [activeTab, setActiveTab] = useState<PageTab>("main");
+    const [level, setLevel] = useState<string>("");
     const { user } = useAuth();
     const [fullUser, setFullUser] = useState<User | null>(null);
 
@@ -34,6 +36,8 @@ export default function UserProfilePage() {
                 try {
                     const fetchedUser = await getUserByEmail(user.email);
                     setFullUser(fetchedUser);
+                    const level = await getLevelOfUser(user.id);
+                    setLevel(level ? level : "0");
                 } catch (error) {
                     console.error("Ошибка при получении пользователя:", error);
                 } finally {
@@ -64,6 +68,7 @@ export default function UserProfilePage() {
                                 />
                                 <div className="pt-2 text-center">
                                     <h1 className="text-2xl font-bold">{fullUser?.name}</h1>
+                                    <p className="text-sm text-gray-500">Уровень: {level ? level : 0}</p>
                                     {isVipActive ? (
                                         <Chip className="mt-2" color="warning">
                                             VIP статус

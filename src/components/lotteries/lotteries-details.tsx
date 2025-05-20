@@ -6,7 +6,18 @@ import { getLotteryById } from "@/data/lottery";
 import { useAuth } from "@/hooks/use-auth";
 import { LotteryPrizes } from "@/types/lottery";
 import { formatDatetime } from "@/utils";
-import { Button, Chip, Image, Spinner, useDisclosure } from "@heroui/react";
+import {
+    Button,
+    Chip,
+    Image,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Spinner,
+    useDisclosure,
+} from "@heroui/react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
 import ModalOrDrawer from "../modal-or-drawer";
@@ -23,6 +34,7 @@ export default function LotteryDetails({ loteryId }: Props) {
     const { user } = useAuth();
     const [totalCost, setTotalCost] = useState<number>(0);
     const [winChance, setWinChance] = useState<number>(0);
+    const [showAuthModal, setShowAuthModal] = useState(false);
     useEffect(() => {
         const loadEvent = async () => {
             try {
@@ -152,7 +164,17 @@ export default function LotteryDetails({ loteryId }: Props) {
             </div>
             {user?.role !== "ADMIN" ? (
                 <>
-                    <Button variant="solid" color="success" onPress={onOpen}>
+                    <Button
+                        variant="solid"
+                        color="success"
+                        onPress={() => {
+                            if (!user?.role) {
+                                setShowAuthModal(true); // Неавторизованный
+                            } else if (user.role === "USER") {
+                                onOpen(); // Открыть оплату
+                            }
+                        }}
+                    >
                         Купить билет
                     </Button>
                 </>
@@ -162,6 +184,29 @@ export default function LotteryDetails({ loteryId }: Props) {
             <ModalOrDrawer isOpen={isOpen} onOpenChangeAction={onOpenChange} label="Детали представителя" size="xl">
                 <PaymentForm onClose={onOpenChange} ticketPrice={lottery.ticketPrice} lotteryId={lottery.id} />
             </ModalOrDrawer>
+            <Modal
+                isOpen={showAuthModal}
+                onOpenChange={() => {
+                    setShowAuthModal(false);
+                }}
+            >
+                <ModalContent>
+                    <ModalHeader>Требуется авторизация</ModalHeader>
+                    <ModalBody>
+                        <p>Чтобы купить билет, пожалуйста, авторизуйтесь или зарегистрируйтесь.</p>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            variant="light"
+                            onPress={() => {
+                                setShowAuthModal(false);
+                            }}
+                        >
+                            Принять
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </>
     );
 }

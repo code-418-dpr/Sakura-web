@@ -199,7 +199,7 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                 </NavbarContent>
             </Navbar>
             <ModalOrDrawer
-                label="Оплата VIP статуса"
+                label="Пополнить баланс"
                 isOpen={isBalanceOpen}
                 onOpenChangeAction={onBalanceOpenChange}
                 size="xl"

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { updateUser } from "@/data/user";
+import { useAuth } from "@/hooks/use-auth";
 import { Button, Card, CardBody, Input } from "@heroui/react";
 
 import { allShipsPlaced, useGame } from "../context/game-context";
@@ -11,6 +13,7 @@ interface SafePlacement {
 }
 
 export const GameHeader: React.FC = () => {
+    const { user, update } = useAuth();
     // Приводим контекст к известным типам, включая placement
     const { state, dispatch } = useGame() as {
         state: GameState & { placement: SafePlacement };
@@ -22,8 +25,13 @@ export const GameHeader: React.FC = () => {
     const placementEnabled = state.placement.enabled;
     const placedShips: Ship[] = state.placement.placedShips;
 
-    const handleStartGame = () => {
+    const handleStartGame = async () => {
         const bet = parseInt(betAmount, 10);
+        if (!user) return null;
+        if (Number(user.realBalance) < bet) {
+            alert("You don't have enough balance to place this bet");
+            return;
+        }
         if (isNaN(bet) || bet <= 0) {
             alert("Please enter a valid bet amount");
             return;
@@ -33,7 +41,8 @@ export const GameHeader: React.FC = () => {
             alert("Please place all your ships before starting the game");
             return;
         }
-
+        await updateUser(user.id, Number(user.realBalance) - bet, Number(user.virtualBalance));
+        await update();
         dispatch({ type: "START_GAME", bet });
     };
 
@@ -104,7 +113,12 @@ export const GameHeader: React.FC = () => {
                                         min="1"
                                         className="w-32"
                                     />
-                                    <Button color="primary" onPress={handleStartGame}>
+                                    <Button
+                                        color="primary"
+                                        onPress={() => {
+                                            void handleStartGame();
+                                        }}
+                                    >
                                         Start Game
                                     </Button>
                                 </div>

@@ -3,12 +3,12 @@ import { Area, AreaChart, ResponsiveContainer } from "recharts";
 
 import React from "react";
 
-import { Button, Card, CardBody, Input, Progress, Tooltip, addToast } from "@heroui/react";
+import { Button, Card, CardBody, Input, Progress, Tooltip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 // Конфигурация игры
 const GAME_CONFIG = {
-    minBet: 10, // Минимальная ставка
+    minBet: 1, // Минимальная ставка
     maxBet: 10000, // Максимальная ставка
     initialBalance: 5000, // Начальный баланс
     baseChance: 0.9, // 99% - шанс продолжить
@@ -149,11 +149,11 @@ export const ModifierGame: React.FC = () => {
     // Логика игры
     const startGame = () => {
         if (state.balance < state.betAmount) {
-            addToast({
-                title: "Недостаточно средств",
-                description: "У вас недостаточно средств для размещения этой ставки.",
-                color: "danger",
-            });
+            // addToast({
+            //     title: "Недостаточно средств",
+            //     description: "У вас недостаточно средств для размещения этой ставки.",
+            //     color: "danger",
+            // });
             return;
         }
 
@@ -181,11 +181,11 @@ export const ModifierGame: React.FC = () => {
                     clearInterval(gameTimerRef.current!);
                     clearInterval(graphUpdateTimerRef.current!);
 
-                    addToast({
-                        title: "Game Over!",
-                        description: `Множитель сгорел на ${formatMultiplier(prev.currentMultiplier)}`,
-                        color: "danger",
-                    });
+                    // addToast({
+                    //     title: "Game Over!",
+                    //     description: `Множитель сгорел на ${formatMultiplier(prev.currentMultiplier)}`,
+                    //     color: "danger",
+                    // });
 
                     // Обновить максимальный множитель за последние игры
                     updateRecentMaxMultiplier(prev.currentMultiplier);
@@ -237,7 +237,7 @@ export const ModifierGame: React.FC = () => {
         setState((prev) => ({
             ...prev,
             isPlaying: false,
-            balance: prev.balance + winnings,
+            balance: state.currentMultiplier >= 1 ? prev.balance + winnings : prev.balance,
             gameHistory: [
                 {
                     bet: prev.betAmount,
@@ -249,11 +249,11 @@ export const ModifierGame: React.FC = () => {
             ],
         }));
 
-        addToast({
-            title: "Winner!",
-            description: `You won ${formatCurrency(winnings)} at ${formatMultiplier(state.currentMultiplier)}`,
-            color: "success",
-        });
+        // addToast({
+        //     title: "Winner!",
+        //     description: `You won ${formatCurrency(winnings)} at ${formatMultiplier(state.currentMultiplier)}`,
+        //     color: "success",
+        // });
     };
 
     // Обновить последний максимальный множитель, основанный на последних 3 играх

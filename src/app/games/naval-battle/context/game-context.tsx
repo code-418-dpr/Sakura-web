@@ -269,7 +269,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
             // 3) подготовим переменные для обновлённого состояния
             let message = "";
             let turn = true;
-            let over = state.gameOver;
+            let over: boolean = state.gameOver;
             let win = state.winner;
 
             // **ВАЖНО**: объявляем заранее, чтобы не было «Cannot find name 'updated'»

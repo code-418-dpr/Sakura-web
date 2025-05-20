@@ -5,7 +5,7 @@ WORKDIR /app
 
 FROM base AS deps
 COPY package.json .
-RUN npm install --prod prisma @prisma/client
+RUN npm install --omit=dev prisma @prisma/client
 COPY prisma/schema.prisma ./prisma/
 RUN npx prisma generate
 

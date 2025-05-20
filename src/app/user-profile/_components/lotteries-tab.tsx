@@ -14,7 +14,6 @@ export default function LotteriesTab() {
     const [userLotteriesData, setUserLotteriesData] = useState<PaginatedResult<UserLotteryData> | null>(null);
     const [page] = useState(1);
     const [userPage, setUserPage] = useState(1);
-    const [activeTab] = useState<"all" | "my">("all");
 
     const perPage = 9;
 
@@ -40,7 +39,7 @@ export default function LotteriesTab() {
         };
 
         void loadData();
-    }, [page, userPage, activeTab, user]);
+    }, [page, userPage, user]);
 
     return (
         <div>

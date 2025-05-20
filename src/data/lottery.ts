@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { LotteryRequestData } from "@/types/lottery-request-data";
 
-import { UserLotteryData } from "./userLottery";
+import { UserLotteryData, UsersLotteryTicket } from "./userLottery";
 
 interface SearchLotteriesParams {
     query?: string;
@@ -106,7 +106,6 @@ export const getUserLotteryData = async (
         const pageSize = params?.pageSize ?? 10;
         const skip = (page - 1) * pageSize;
 
-        // Получаем общее количество билетов пользователя
         const totalItems = await prisma.ticket.count({
             where: { userId },
         });
@@ -129,6 +128,12 @@ export const getUserLotteryData = async (
                                 image: true,
                                 start: true,
                                 end: true,
+                                ticketPrice: true,
+                                participantsCount: true,
+                                winnersCount: true,
+                                vipDiscount: true,
+                                vipParticipantsCount: true,
+                                rules: true,
                                 prizes: {
                                     select: {
                                         id: true,
@@ -158,6 +163,12 @@ export const getUserLotteryData = async (
                     ...ticket.lottery,
                     type: ticket.lottery.isReal ? "REAL" : "VIRTUAL",
                     image: ticket.lottery.image ? Buffer.from(ticket.lottery.image).toString("base64") : null,
+                    ticketPrice: Number(ticket.lottery.ticketPrice),
+                    participantsCount: ticket.lottery.participantsCount.toString(),
+                    winnersCount: ticket.lottery.winnersCount.toString(),
+                    vipDiscount: ticket.lottery.vipDiscount,
+                    vipParticipantsCount: ticket.lottery.vipParticipantsCount.toString(),
+                    rules: ticket.lottery.rules,
                     userTicket: {
                         number: ticket.number,
                         price: Number(ticket.price),
@@ -183,6 +194,86 @@ export const getUserLotteryData = async (
         throw new Error("Failed to fetch user lottery information");
     }
 };
+
+export const getUserLotteryById = async (userId: string, lotteryId: string): Promise<UsersLotteryTicket | null> => {
+    try {
+        const tickets = await prisma.ticket.findMany({
+            where: {
+                userId,
+                lotteryId,
+            },
+            select: {
+                number: true,
+                price: true,
+                place: true,
+                lottery: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        isReal: true,
+                        image: true,
+                        start: true,
+                        end: true,
+                        ticketPrice: true,
+                        participantsCount: true,
+                        winnersCount: true,
+                        vipDiscount: true,
+                        vipParticipantsCount: true,
+                        rules: true,
+                        prizes: {
+                            select: {
+                                id: true,
+                                title: true,
+                                moneyPrice: true,
+                                pointsPrice: true,
+                                count: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!tickets.length || !tickets[0]) return null;
+
+        const lottery = tickets[0].lottery;
+
+        const result: UsersLotteryTicket = {
+            id: lottery.id,
+            title: lottery.title,
+            description: lottery.description,
+            type: lottery.isReal ? "REAL" : "VIRTUAL",
+            image: lottery.image ? Buffer.from(lottery.image).toString("base64") : null,
+            start: lottery.start,
+            end: lottery.end,
+            ticketPrice: Number(lottery.ticketPrice),
+            participantsCount: lottery.participantsCount.toString(),
+            winnersCount: lottery.winnersCount.toString(),
+            vipDiscount: lottery.vipDiscount,
+            vipParticipantsCount: lottery.vipParticipantsCount.toString(),
+            rules: lottery.rules,
+            userTickets: tickets.map((ticket) => ({
+                number: ticket.number,
+                price: Number(ticket.price),
+                place: ticket.place,
+            })),
+            prizes: lottery.prizes.map((prize) => ({
+                id: prize.id,
+                title: prize.title,
+                moneyPrice: Number(prize.moneyPrice),
+                pointsPrice: Number(prize.pointsPrice),
+                count: prize.count,
+            })),
+        };
+
+        return result;
+    } catch (error) {
+        console.error("Error fetching user lottery tickets:", error);
+        throw new Error("Failed to fetch user lottery tickets");
+    }
+};
+
 export const getLotteryByTitle = async (title: string) => {
     return prisma.lottery.findFirst({ where: { title: { equals: title } } });
 };

@@ -131,7 +131,7 @@ export default function LotteryDetails({ loteryId }: Props) {
                 <></>
             )}
             <ModalOrDrawer isOpen={isOpen} onOpenChangeAction={onOpenChange} label="Детали представителя" size="xl">
-                <PaymentForm onClose={onOpenChange} ticketPrice={lottery.ticketPrice} />
+                <PaymentForm onClose={onOpenChange} ticketPrice={lottery.ticketPrice} lotteryId={lottery.id} />
             </ModalOrDrawer>
         </>
     );

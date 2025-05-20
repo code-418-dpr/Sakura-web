@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useSession } from "next-auth/react";
 
+import { createTicket } from "@/data/ticket";
 import { updateUser } from "@/data/user";
 import { useAuth } from "@/hooks/use-auth";
 import { Alert, Button, Input, Radio, RadioGroup } from "@heroui/react";
@@ -9,10 +10,11 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 
 interface PaymentFormProps {
     onClose: () => void;
+    lotteryId: string;
     ticketPrice: number;
 }
 
-export default function PaymentForm({ onClose, ticketPrice }: PaymentFormProps) {
+export default function PaymentForm({ onClose, lotteryId, ticketPrice }: PaymentFormProps) {
     const { update } = useSession();
     const [paymentMethod, setPaymentMethod] = useState<"real" | "card" | "bonuses">("real");
     const [cardDetails, setCardDetails] = useState({
@@ -60,6 +62,7 @@ export default function PaymentForm({ onClose, ticketPrice }: PaymentFormProps) 
                 await updateUser(user.id, Number(user.realBalance), Number(user.virtualBalance) + price * 0.1);
             }
             await update();
+            await createTicket(user.id, lotteryId, ticketPrice);
             setSuccess(true);
             setTimeout(onClose, 2000);
         } catch (err) {

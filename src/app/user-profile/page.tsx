@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 
 import { EditProfileForm } from "@/app/user-profile/_components/edit-form";
-// import { EditProfileModal } from "@/app/profile/Components/PersonalInfo/editProfileModal";
 import { ProfileTabs } from "@/app/user-profile/_components/profile-tabs";
 import NavbarElement from "@/components/Navbar/navbar";
 import ModalOrDrawer from "@/components/modal-or-drawer";
@@ -11,8 +10,6 @@ import { getUserByEmail } from "@/data/user";
 import { useAuth } from "@/hooks/use-auth";
 import { PageTab } from "@/types/tabs";
 import { User } from "@/types/user";
-// import { ProfileSkeleton } from "@/app/user-profile/_components/skeleton";
-// import { AuthContext } from "@/hooks/use-auth";
 import { Card, CardBody } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { Avatar, Button, useDisclosure } from "@heroui/react";

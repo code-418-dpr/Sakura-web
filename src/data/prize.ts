@@ -7,20 +7,32 @@ export const getPrizeByTitle = async (title: string) => {
 };
 
 export const getPrizeByLotteryIdAndMoneyPrize = async (lotteryId: string, moneyPrice: number) => {
-    return db.prize.findFirst({ 
-        where: { 
-            lotteryId: { equals: lotteryId }, 
-            moneyPrice: { equals: moneyPrice } 
-        } 
+    return db.prize.findFirst({
+        where: {
+            lotteryId: { equals: lotteryId },
+            moneyPrice: { equals: moneyPrice },
+        },
     });
 };
 
 export const createPrize = async (
-    title: string, 
+    title: string,
     lotteryId: string,
     moneyPrice: number,
-    pointsPrice: number,  
-    count:number
+    pointsPrice: number,
+    count: number,
 ) => {
     return db.prize.create({ data: { title, lotteryId, moneyPrice, pointsPrice, count } });
 };
+
+export async function getLotteryPrizes(lotteryId: string) {
+    const lottery = await db.lottery.findUnique({ where: { id: lotteryId }, select: { winnersCount: true } });
+    if (!lottery) {
+        return null;
+    }
+    return db.prize.findMany({
+        where: { lotteryId },
+        orderBy: { moneyPrice: "desc", pointsPrice: "desc" },
+        take: lottery.winnersCount,
+    });
+}

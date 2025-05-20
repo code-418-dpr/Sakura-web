@@ -46,3 +46,15 @@ export const createTicket = async (userId: string, lotteryId: string, price: num
         },
     });
 };
+
+export async function getLotteryWinnerTickets(lotteryId: string) {
+    const lottery = await db.lottery.findUnique({ where: { id: lotteryId }, select: { winnersCount: true } });
+    if (!lottery) {
+        return null;
+    }
+    return db.ticket.findMany({
+        where: { lotteryId },
+        orderBy: { place: "asc" },
+        take: lottery.winnersCount,
+    });
+}

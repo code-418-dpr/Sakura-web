@@ -170,7 +170,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
             const shots = state.player.shotsBoard.map((r) => [...r]);
             let message = "";
             let turn = false;
-            let over = state.gameOver;
+            let over: boolean = state.gameOver;
             let win = state.winner;
 
             const cell = state.bot.board[row][col];

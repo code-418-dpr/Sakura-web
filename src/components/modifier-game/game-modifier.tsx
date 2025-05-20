@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, ResponsiveContainer } from "recharts";
 
 import React from "react";
 
@@ -11,7 +11,7 @@ const GAME_CONFIG = {
     minBet: 10, // Минимальная ставка
     maxBet: 10000, // Максимальная ставка
     initialBalance: 5000, // Начальный баланс
-    baseChance: 0.99, // 99% - шанс продолжить
+    baseChance: 0.9, // 99% - шанс продолжить
     minMultiplier: 0.1, // Минимальный множитель
     maxMultiplier: 3.0, // Максимальный множитель
     updateInterval: 50, // ms между обновлениями - настроено для более быстрого, но все еще кликабельного интерфейса
@@ -204,18 +204,15 @@ export const ModifierGame: React.FC = () => {
                         ],
                     };
                 }
-
                 // Игра продолжается - увеличить множитель
                 // Скорость роста, чтобы среднее значение было около 1.0 с 20% отклонением
                 const growthRate = 0.01;
                 const newMultiplier = Math.min(prev.currentMultiplier + growthRate, GAME_CONFIG.maxMultiplier);
-
                 // Обновить данные графика
                 const newGraphData = [
                     ...prev.graphData.slice(1),
                     { time: prev.graphData[prev.graphData.length - 1].time + 1, multiplier: newMultiplier },
                 ];
-
                 return {
                     ...prev,
                     currentMultiplier: newMultiplier,
@@ -325,77 +322,34 @@ export const ModifierGame: React.FC = () => {
                             {/* Graph - Now on the left with square aspect ratio */}
                             <div className="bg-content1 aspect-square h-48 w-full rounded-lg p-2 md:h-auto md:flex-1">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart
+                                    <AreaChart
                                         data={state.graphData}
                                         margin={{ right: 10, left: 0, top: 10, bottom: 10 }}
                                     >
-                                        <CartesianGrid
-                                            strokeDasharray="3 3"
-                                            stroke="hsl(var(--heroui-default-200))"
-                                            horizontalPoints={Array.from({ length: 30 }, (_, i) => i)}
-                                            verticalPoints={Array.from({ length: 30 }, (_, i) => i)}
-                                        />
-                                        <XAxis dataKey="time" hide />
-                                        <YAxis domain={[0, state.currentMultiplier * 1.1]} hide />
                                         <defs>
-                                            <linearGradient id="successGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop
-                                                    offset="5%"
-                                                    stopColor="hsl(var(--heroui-success-500))"
-                                                    stopOpacity={0.8}
-                                                />
-                                                <stop
-                                                    offset="95%"
-                                                    stopColor="hsl(var(--heroui-success-500))"
-                                                    stopOpacity={0.3}
-                                                />
-                                            </linearGradient>
-                                            <linearGradient id="dangerGradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop
-                                                    offset="5%"
-                                                    stopColor="hsl(var(--heroui-danger-500))"
-                                                    stopOpacity={0.8}
-                                                />
-                                                <stop
-                                                    offset="95%"
-                                                    stopColor="hsl(var(--heroui-danger-500))"
-                                                    stopOpacity={0.3}
-                                                />
+                                            <linearGradient id="colorMultiplier" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stopColor={getGraphLineColor(state.currentMultiplier)} stopOpacity={0.4}/>
+                                                <stop offset="100%" stopColor={getGraphLineColor(state.currentMultiplier)} stopOpacity={0}/>
                                             </linearGradient>
                                         </defs>
-                                        <Line
+                                        <Area
                                             type="monotone"
                                             dataKey="multiplier"
                                             stroke={getGraphLineColor(state.currentMultiplier)}
                                             strokeWidth={3}
-                                            dot={false}
+                                            fillOpacity={1}
+                                            fill="url(#colorMultiplier)"
                                             isAnimationActive={true}
-                                            activeDot={{ r: 6 }}
-                                            // Start from the bottom of the chart
-                                            fill={
-                                                state.currentMultiplier >= 1
-                                                    ? "url(#successGradient)"
-                                                    : "url(#dangerGradient)"
-                                            }
-                                            // Make the line smoother
                                             connectNulls={true}
                                         />
-                                        {/* Add a dot at the start point */}
-                                        <Line
-                                            data={[state.graphData[0]]}
-                                            type="monotone"
-                                            dataKey="multiplier"
-                                            stroke={getGraphLineColor(state.currentMultiplier)}
-                                            strokeWidth={0}
-                                            dot={{ r: 4, fill: getGraphLineColor(state.currentMultiplier) }}
-                                        />
-                                    </LineChart>
+                                    </AreaChart>
                                 </ResponsiveContainer>
                             </div>
 
                             {/* Current multiplier display - Now on the right */}
-                            <div className="relative z-20 flex flex-col items-center justify-center md:w-1/3">
-                                <span className="text-default-600 mb-2 text-sm">Current Multiplier</span>
+                            <div className="relative z-20 flex flex-col items-center justify-center md:w-1/2">
+                                {/* Текущий множитель */}
+                                <span className="text-default-600 mb-2 text-sm">Текущий множитель</span>
                                 <motion.div
                                     className="text-5xl font-bold"
                                     animate={{
@@ -456,7 +410,7 @@ export const ModifierGame: React.FC = () => {
                                     type="number"
                                     value={state.betAmount.toString()}
                                     onValueChange={handleBetAmountChange}
-                                    startContent={<Icon icon="lucide:dollar-sign" className="text-default-400" />}
+                                    startContent={<Icon icon="lucide:russian-ruble" className="text-default-600" height={25} />}
                                     endContent={
                                         <div className="flex gap-1">
                                             <Button
@@ -514,7 +468,7 @@ export const ModifierGame: React.FC = () => {
                                     onPress={state.isPlaying ? stopGame : startGame}
                                     isDisabled={state.isPlaying && state.currentMultiplier < GAME_CONFIG.minMultiplier}
                                 >
-                                    {state.isPlaying ? "Снять ставку" : "Начать игру"}
+                                    {state.isPlaying ? "Снять ставку" : state.gameHistory.length > 0 ? "Сыграть еще" : "Начать игру"}
                                 </Button>
 
                                 <Tooltip content="Add funds">
@@ -579,7 +533,7 @@ export const ModifierGame: React.FC = () => {
                     </div>
 
                     {/* Game info - Simplified */}
-                    <div className="text-default-500 mt-2 text-sm">
+                    <div className="text-default-600 mt-2 text-sm">
                         <p>Поставьте свою ставку и постарайтесь снять деньги, прежде чем множитель сгорит!</p>
                     </div>
                 </div>

@@ -78,7 +78,7 @@ export default function SakuraPage() {
     );
 }
 const getSakuraState = (user: User | null) => {
-    if (!user?.lastActivity) return "bad"; // Если нет данных о последней активности
+    if (!user?.lastActivity) return "bad";
 
     const lastActivityDate = new Date(user.lastActivity);
     const now = new Date();

@@ -91,6 +91,7 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                     {tabs.map((tab) => (
                         <NavbarItem key={tab}>
                             <Link
+                                hidden={!isAuthenticated && getTabLabel(tab) !== "Лотереи"}
                                 color="foreground"
                                 href={`/${tab}`}
                                 onPressEnd={(e: PressEvent) => {

@@ -3,7 +3,7 @@
 import React from "react";
 
 import { signOut } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/hooks/use-auth";
 import { PageTab } from "@/types/tabs";
@@ -38,23 +38,30 @@ interface NavbarProps {
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: PageTab[] = ["catalog", "sakura", "games"];
     const { isOpen: isAuthOpen, onOpen: onAuthOpen, onOpenChange: onAuthOpenChange } = useDisclosure();
     const { isOpen: isReferalOpen, onOpen: onReferalOpen, onOpenChange: onReferalOpenChange } = useDisclosure();
     const { isOpen: isBalanceOpen, onOpen: onBalanceOpen, onOpenChange: onBalanceOpenChange } = useDisclosure();
     const { user, isLoading, isAuthenticated } = useAuth();
     const router = useRouter();
-    const pathname = usePathname();
 
     const handleNavigation = (e: PressEvent, tab: PageTab) => {
         setActiveTabAction(tab);
     };
+
+    const tabs: PageTab[] = React.useMemo(() => {
+        const baseTabs: PageTab[] = ["sakura", "games"];
+        if (user?.role === "ADMIN") {
+            return ["admin", ...baseTabs];
+        }
+        return ["catalog", ...baseTabs];
+    }, [user?.role]);
 
     const getTabLabel = (tab: PageTab): string => {
         const labels = {
             catalog: "Лотереи",
             sakura: "Сакура",
             games: "Игры",
+            admin: "Админ Панель",
         } as const;
 
         if (tab in labels) {
@@ -71,26 +78,22 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
         <>
             <Navbar>
                 <NavbarBrand className="gap-x-4">
-                    <Image alt="Sakura Logo" src="sakura.png" width={32} height={32} />
-                    <p className="font-bold text-inherit">SAKURA</p>
+                    <Link
+                        color="foreground"
+                        href="/"
+                        onPressEnd={(e: PressEvent) => {
+                            handleNavigation(e, "main");
+                        }}
+                    >
+                        <Image alt="Sakura Logo" src="sakura.png" width={32} height={32} />
+                        <p className="font-bold text-inherit">SAKURA</p>
+                    </Link>
                 </NavbarBrand>
                 <NavbarContent className="hidden gap-4 sm:flex" justify="center">
-                    {pathname !== "/" && (
-                        <NavbarItem key="main">
-                            <Link
-                                color="foreground"
-                                href="/"
-                                onPressEnd={(e: PressEvent) => {
-                                    handleNavigation(e, "main");
-                                }}
-                            >
-                                Главная
-                            </Link>
-                        </NavbarItem>
-                    )}
                     {tabs.map((tab) => (
                         <NavbarItem key={tab}>
                             <Link
+                                hidden={!isAuthenticated && getTabLabel(tab) !== "Лотереи"}
                                 color="foreground"
                                 href={`/${tab}`}
                                 onPressEnd={(e: PressEvent) => {

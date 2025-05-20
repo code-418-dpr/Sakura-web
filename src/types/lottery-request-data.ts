@@ -1,3 +1,5 @@
+import { Prize } from "@/types/prize";
+
 export interface LotteryRequestData {
     title: string;
     description: string;
@@ -11,4 +13,5 @@ export interface LotteryRequestData {
     ticketPrice: number;
     vipDiscount: number;
     rules: string;
+    prizes: Prize[];
 }

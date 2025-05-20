@@ -15,8 +15,7 @@ enum UserRole {
 }
 
 model UserLevel {
-  id    String @id @default(uuid())
-  title String
+  title String @unique
   score BigInt
 }
 

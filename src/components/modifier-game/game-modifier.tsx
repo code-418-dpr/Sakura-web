@@ -289,9 +289,12 @@ export const ModifierGame: React.FC = () => {
 
     // Очистите таймеры при размонтировании
     React.useEffect(() => {
+        const gameTimer = gameTimerRef.current;
+        const graphTimer = graphUpdateTimerRef.current;
+
         return () => {
-            if (gameTimerRef.current) clearInterval(gameTimerRef.current);
-            if (graphUpdateTimerRef.current) clearInterval(graphUpdateTimerRef.current);
+            if (gameTimer) clearInterval(gameTimer);
+            if (graphTimer) clearInterval(graphTimer);
         };
     }, []);
 
@@ -541,4 +544,3 @@ export const ModifierGame: React.FC = () => {
         </Card>
     );
 };
-

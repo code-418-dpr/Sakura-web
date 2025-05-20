@@ -20,20 +20,20 @@ import { GameKeyboard } from "./game-keyboard";
 import { GameRow } from "./game-row";
 import { wordList } from "./word-list";
 
-// Maximum number of attempts allowed
+// Максимальное количество попыток
 const MAX_ATTEMPTS = 6;
 
-// Points awarded based on attempt number
+// Очки за угадывание в зависимости от номера попытки
 const POINTS_MULTIPLIER = {
-    1: 10, // 1st attempt: 10x points
-    2: 5, // 2nd attempt: 5x points
-    3: 3, // 3rd attempt: 3x points
-    4: 2, // 4th attempt: 2x points
-    5: 1.5, // 5th attempt: 1.5x points
-    6: 1, // 6th attempt: 1x points
+    1: 10, // 1-я попытка: 10x очков
+    2: 5, // 2-я попытка: 5x очков
+    3: 3, // 3-я попытка: 3x очков
+    4: 2, // 4-я попытка: 2x очков
+    5: 1.5, // 5-я попытка: 1.5x очков
+    6: 1, // 6-я попытка: 1x очков
 };
 
-// Base points for guessing the word
+// Базовые очки за угаданное слово
 const BASE_POINTS = 100;
 
 type LetterState = "correct" | "present" | "absent" | "empty";
@@ -63,15 +63,14 @@ export const WordGame: React.FC = () => {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    // Get a random word from the word list
+    // Получить случайное слово
     function getRandomWord(): string {
         return wordList[Math.floor(Math.random() * wordList.length)].toLowerCase();
     }
 
-    // Handle keyboard input
+    // Обработка нажатия клавиш
     const handleKeyPress = (key: string) => {
         if (gameState.gameStatus !== "playing") return;
-
         if (key === "Enter") {
             submitGuess();
         } else if (key === "Backspace") {
@@ -81,7 +80,7 @@ export const WordGame: React.FC = () => {
                     currentGuess: prev.currentGuess.slice(0, -1),
                 }));
             }
-        } else if (/^[a-z]$/i.test(key) && gameState.currentGuess.length < 5) {
+        } else if (/^[а-яёa-z]$/i.test(key) && gameState.currentGuess.length < 5) {
             setGameState((prev) => ({
                 ...prev,
                 currentGuess: prev.currentGuess + key.toLowerCase(),
@@ -89,13 +88,12 @@ export const WordGame: React.FC = () => {
         }
     };
 
-    // Submit the current guess
+    // Отправить текущее предположение
     const submitGuess = () => {
         if (gameState.currentGuess.length !== 5) return;
-
         if (!wordList.includes(gameState.currentGuess.toLowerCase())) {
             addToast({
-                title: "Не верное слово",
+                title: "Неверное слово",
                 description: "Введённого слова не существует",
                 color: "warning",
                 timeout: 3000,
@@ -107,18 +105,16 @@ export const WordGame: React.FC = () => {
         const newGuesses = [...gameState.guesses];
         newGuesses[gameState.currentAttempt] = gameState.currentGuess;
 
-        // Check if the guess is correct
+        // Проверить, угадано ли слово
         const isCorrect = gameState.currentGuess.toLowerCase() === gameState.targetWord;
 
-        // Calculate letter states
+        // Расчёт состояния букв
         const newLetterStates = { ...gameState.letterStates };
-
-        // First mark all letters as absent
         for (const letter of gameState.currentGuess) {
             newLetterStates[letter.toLowerCase()] = "absent";
         }
 
-        // Then check for correct positions
+        // Сначала проверяем буквы на правильных позициях
         for (let i = 0; i < gameState.currentGuess.length; i++) {
             const letter = gameState.currentGuess[i].toLowerCase();
             if (letter === gameState.targetWord[i]) {
@@ -126,18 +122,17 @@ export const WordGame: React.FC = () => {
             }
         }
 
-        // Finally check for present but wrong position
+        // Затем проверяем наличие букв в другом месте
         for (let i = 0; i < gameState.currentGuess.length; i++) {
             const letter = gameState.currentGuess[i].toLowerCase();
             if (letter !== gameState.targetWord[i] && gameState.targetWord.includes(letter)) {
-                // Only mark as present if it's not already marked as correct
                 if (newLetterStates[letter] !== "correct") {
                     newLetterStates[letter] = "present";
                 }
             }
         }
 
-        // Calculate score if won
+        // Начисление очков
         let earnedPoints = 0;
         if (isCorrect) {
             const attemptNumber = gameState.currentAttempt + 1;
@@ -156,7 +151,7 @@ export const WordGame: React.FC = () => {
             totalScore: prev.totalScore + earnedPoints,
         }));
 
-        // Show results modal if game is over
+        // Открыть модальное окно, если игра закончена
         if (isCorrect || gameState.currentAttempt + 1 >= MAX_ATTEMPTS) {
             setTimeout(() => {
                 onOpen();
@@ -164,7 +159,7 @@ export const WordGame: React.FC = () => {
         }
     };
 
-    // Start a new game
+    // Начать новую игру
     const startNewGame = () => {
         setGameState((prev) => ({
             ...prev,
@@ -179,18 +174,17 @@ export const WordGame: React.FC = () => {
         onClose();
     };
 
-    // Handle physical keyboard input
+    // Обработка физической клавиатуры
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter") {
                 submitGuess();
             } else if (e.key === "Backspace") {
                 handleKeyPress("Backspace");
-            } else if (/^[a-z]$/i.test(e.key)) {
+            } else if (/^[а-яёa-z]$/i.test(e.key)) {
                 handleKeyPress(e.key);
             }
         };
-
         window.addEventListener("keydown", handleKeyDown);
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
@@ -203,7 +197,7 @@ export const WordGame: React.FC = () => {
                 <CardHeader className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Icon icon="lucide:award" className="text-primary" />
-                        <span className="font-semibold">Total Score: {gameState.totalScore}</span>
+                        <span className="font-semibold">Общий счёт: {gameState.totalScore}</span>
                     </div>
                     <Button
                         size="sm"
@@ -212,7 +206,7 @@ export const WordGame: React.FC = () => {
                         onPress={startNewGame}
                         startContent={<Icon icon="lucide:refresh-cw" />}
                     >
-                        New Game
+                        Новая игра
                     </Button>
                 </CardHeader>
                 <CardBody className="flex flex-col items-center gap-2">
@@ -236,38 +230,42 @@ export const WordGame: React.FC = () => {
                 </CardFooter>
             </Card>
 
-            {/* Results Modal */}
+            {/* Модальное окно результатов */}
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalContent>
                     <ModalHeader className="flex flex-col gap-1">
-                        {gameState.gameStatus === "won" ? "Congratulations!" : "Game Over"}
+                        {gameState.gameStatus === "won" ? "Поздравляем!" : "Игра окончена"}
                     </ModalHeader>
                     <ModalBody>
                         {gameState.gameStatus === "won" ? (
                             <div className="text-center">
                                 <p className="mb-2 text-lg">
-                                    You guessed the word in {gameState.currentAttempt}{" "}
-                                    {gameState.currentAttempt === 1 ? "attempt" : "attempts"}!
+                                    Вы угадали слово за {gameState.currentAttempt}{" "}
+                                    {gameState.currentAttempt === 1
+                                        ? "попытку"
+                                        : gameState.currentAttempt <= 4
+                                          ? "попытки"
+                                          : "попыток"}
+                                    !
                                 </p>
-                                <p className="text-primary mb-4 text-2xl font-bold">+{gameState.score} points!</p>
+                                <p className="text-primary mb-4 text-2xl font-bold">+{gameState.score} очков!</p>
                                 <p className="text-default-500 text-sm">
-                                    Multiplier:{" "}
+                                    Множитель:{" "}
                                     {POINTS_MULTIPLIER[gameState.currentAttempt as keyof typeof POINTS_MULTIPLIER]}x
                                 </p>
                             </div>
                         ) : (
                             <div className="text-center">
                                 <p className="mb-4 text-lg">
-                                    The word was:{" "}
-                                    <span className="font-bold">{gameState.targetWord.toUpperCase()}</span>
+                                    Слово было: <span className="font-bold">{gameState.targetWord.toUpperCase()}</span>
                                 </p>
-                                <p className="text-default-500 text-sm">Better luck next time!</p>
+                                <p className="text-default-500 text-sm">Удачи в следующий раз!</p>
                             </div>
                         )}
                     </ModalBody>
                     <ModalFooter>
                         <Button color="primary" onPress={startNewGame}>
-                            Play Again
+                            Играть снова
                         </Button>
                     </ModalFooter>
                 </ModalContent>

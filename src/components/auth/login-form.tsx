@@ -27,6 +27,7 @@ export default function LoginForm() {
     useEffect(() => {
         if (session) {
             router.push("/");
+            window.location.reload();
         }
     }, [session, router]);
     const {

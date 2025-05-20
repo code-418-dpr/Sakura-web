@@ -3,33 +3,37 @@ import React from "react";
 import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
+// Состояние букв: угадана / есть в слове / отсутствует / пустая
 type LetterState = "correct" | "present" | "absent" | "empty";
 
+// Пропсы для клавиатуры
 interface GameKeyboardProps {
-    onKeyPress: (key: string) => void;
-    letterStates: Record<string, LetterState>;
+    onKeyPress: (key: string) => void; // Обработчик нажатия клавиш
+    letterStates: Record<string, LetterState>; // Состояния букв
 }
 
 export const GameKeyboard: React.FC<GameKeyboardProps> = ({ onKeyPress, letterStates }) => {
+    // Раскладка клавиатуры
     const keyboardRows = [
-        ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-        ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
-        ["Enter", "z", "x", "c", "v", "b", "n", "m", "Backspace"],
+        ["й", "ц", "у", "к", "е", "н", "г", "ш", "щ", "з"],
+        ["ф", "ы", "в", "а", "п", "р", "о", "л", "д"],
+        ["Enter", "я", "ч", "с", "м", "и", "т", "ь", "Backspace"],
     ];
 
+    // Получить стиль кнопки в зависимости от состояния буквы
     const getKeyStyle = (key: string) => {
         if (key === "Enter" || key === "Backspace") {
             return "bg-default-100";
         }
 
         switch (letterStates[key]) {
-            case "correct":
+            case "correct": // Буква на правильном месте
                 return "bg-success-500 text-white";
-            case "present":
+            case "present": // Буква есть в слове, но не на своём месте
                 return "bg-warning-500 text-black";
-            case "absent":
+            case "absent": // Буквы нет в слове
                 return "bg-default-300";
-            default:
+            default: // Не проверенная буква
                 return "bg-default-100";
         }
     };

@@ -5,13 +5,21 @@ import { motion } from "framer-motion";
 import React from "react";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 import { heroData } from "../../mocks/hero-data";
 
-const Hero: React.FC = () => {
+interface HeroProps {
+    onOpen: () => void;
+}
+
+export default function Hero({ onOpen }: HeroProps) {
+    const { isAuthenticated } = useAuth();
+    const router = useRouter();
     return (
         <section className="relative overflow-hidden py-20">
             <motion.div
@@ -55,6 +63,13 @@ const Hero: React.FC = () => {
                                 radius="full"
                                 className="font-semibold"
                                 startContent={<Icon icon="lucide:ticket" />}
+                                onPress={() => {
+                                    if (!isAuthenticated) {
+                                        onOpen();
+                                    } else {
+                                        router.push("/catalog");
+                                    }
+                                }}
                             >
                                 {heroData.primaryButtonText}
                             </Button>
@@ -123,6 +138,4 @@ const Hero: React.FC = () => {
             </div>
         </section>
     );
-};
-
-export default Hero;
+}

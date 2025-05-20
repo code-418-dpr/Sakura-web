@@ -13,14 +13,19 @@ import { SectionScrollSnap } from "@/components/Landing/section-scroll-snap";
 import TestimonialsSection from "@/components/Landing/testimonials-section";
 import WinnersSection from "@/components/Landing/winners-section";
 import NavbarElement from "@/components/Navbar/navbar";
+import AuthForm from "@/components/auth/auth-form";
+import ModalOrDrawer from "@/components/modal-or-drawer";
 import { PageTab } from "@/types/tabs";
-import { Image } from "@heroui/react";
+import { Image, useDisclosure } from "@heroui/react";
+
+// src/app/page.tsx
 
 // src/app/page.tsx
 
 export default function Home() {
     const [activeTab, setActiveTab] = useState<PageTab>("main");
     const [showNavbar] = useState(true);
+    const { isOpen: isAuthOpen, onOpen: onAuthOpen, onOpenChange: onAuthOpenChange } = useDisclosure();
 
     return (
         <div className="relative">
@@ -91,7 +96,10 @@ export default function Home() {
 
             {/* Секции лендинга */}
             <SectionScrollSnap id="hero">
-                <Hero />
+                <Hero onOpen={onAuthOpen} />
+                <ModalOrDrawer label="Авторизация" isOpen={isAuthOpen} onOpenChangeAction={onAuthOpenChange}>
+                    <AuthForm />
+                </ModalOrDrawer>
             </SectionScrollSnap>
 
             <SectionScrollSnap id="winners">

@@ -75,6 +75,7 @@
         "prettier": "^3.5.3",
         "prettier-plugin-tailwindcss": "^0.6.8",
         "react-confetti": "^6.4.0",
+        "recharts": "^2.15.3",
         "stylelint": "^16.17.0",
         "stylelint-config-recommended": "^16.0.0",
         "stylelint-config-tailwindcss": "^1.0.0",

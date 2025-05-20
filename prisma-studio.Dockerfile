@@ -3,9 +3,9 @@ FROM node:${NODE_VERSION}-alpine AS base
 RUN apk add --no-cache openssl
 WORKDIR /app
 
-FROM base as deps
+FROM base AS deps
 COPY package.json .
-RUN npm install prisma @prisma/client
+RUN npm install --prod prisma @prisma/client
 COPY prisma/schema.prisma ./prisma/
 RUN npx prisma generate
 

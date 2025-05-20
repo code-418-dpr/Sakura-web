@@ -22,4 +22,11 @@ export const games: Game[] = [
         imageUrl: "https://avatars.mds.yandex.net/i?id=fb1c1cf29ca8f31b0d0fb2a1b35e1944_l-12473832-images-thumbs&n=13",
         pageUrl: "slot-machine",
     },
+    {
+        id: "4",
+        title: "Пять букв",
+        description: "Угадайте слово за 5 или меньше попыток и получите приз",
+        imageUrl: "https://avatars.mds.yandex.net/i?id=fb1c1cf29ca8f31b0d0fb2a1b35e1944_l-12473832-images-thumbs&n=13",
+        pageUrl: "five-game",
+    },
 ];

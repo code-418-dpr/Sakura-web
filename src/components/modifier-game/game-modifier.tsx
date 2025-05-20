@@ -6,20 +6,20 @@ import React from "react";
 import { Button, Card, CardBody, Input, Progress, Tooltip, addToast } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
-// Game configuration
+// Конфигурация игры
 const GAME_CONFIG = {
-    minBet: 10,
-    maxBet: 10000,
-    initialBalance: 5000,
-    baseChance: 0.99, // 55% chance of continuing
-    minMultiplier: 0.1,
-    maxMultiplier: 3.0,
-    updateInterval: 50, // ms between updates - adjusted to be more responsive but still clickable
-    graphDataPoints: 60, // Number of points to show on graph
-    houseEdge: 0.05, // 5% house edge - adjusted for better player experience
+    minBet: 10, // Минимальная ставка
+    maxBet: 10000, // Максимальная ставка
+    initialBalance: 5000, // Начальный баланс
+    baseChance: 0.99, // 99% - шанс продолжить
+    minMultiplier: 0.1, // Минимальный множитель
+    maxMultiplier: 3.0, // Максимальный множитель
+    updateInterval: 50, // ms между обновлениями - настроено для более быстрого, но все еще кликабельного интерфейса
+    graphDataPoints: 60, // Количество точек, отображаемых на графике
+    houseEdge: 0.05, // 5% - преимущество дома - настроено для более приятного игрового опыта
 };
 
-// Types
+// Типы
 interface GameState {
     isPlaying: boolean;
     currentMultiplier: number;
@@ -38,7 +38,7 @@ interface GameState {
     }[];
 }
 
-// Helper functions
+// Вспомогательные функции
 const formatCurrency = (amount: number): string => {
     return amount.toLocaleString("en-US", {
         style: "currency",
@@ -52,22 +52,22 @@ const formatMultiplier = (multiplier: number): string => {
     return `x${multiplier.toFixed(2)}`;
 };
 
-// Calculate chance of continuing based on current multiplier
+// Рассчитать шанс продолжения на основе текущего множителя
 const calculateContinueChance = (multiplier: number): number => {
-    // As multiplier grows, chance decreases exponentially
+    // По мере роста множителя шанс уменьшается экспоненциально
     const baseChance = GAME_CONFIG.baseChance;
 
-    // Adjust the curve to center around 1.0 with 20% deviation
+    // Подстройте кривую, чтобы центрировалась вокруг 1.0 с 20% отклонением
     if (multiplier <= 1.0) {
-        // Higher chance below 1.0
+        // Более высокий шанс ниже 1.0
         return baseChance;
     } else {
-        // Decreasing chance above 1.0, more aggressive decline
+        // Уменьшение шанса выше 1.0, более агрессивное снижение
         return baseChance * Math.pow(0.8, (multiplier - 1.0) * 2);
     }
 };
 
-// Sakura petal component
+// Леписток сакуры
 const SakuraPetal: React.FC<{ index: number }> = ({ index }) => {
     const size = React.useMemo(() => Math.random() * 20 + 10, []);
     const xPos = React.useMemo(() => Math.random() * 100, []);
@@ -103,7 +103,7 @@ const SakuraPetal: React.FC<{ index: number }> = ({ index }) => {
     );
 };
 
-export const CSGOModifierGame: React.FC = () => {
+export const ModifierGame: React.FC = () => {
     const [state, setState] = React.useState<GameState>({
         isPlaying: false,
         currentMultiplier: 1.0,
@@ -120,10 +120,10 @@ export const CSGOModifierGame: React.FC = () => {
     const gameTimerRef = React.useRef<NodeJS.Timeout | null>(null);
     const graphUpdateTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
-    // Add state for tracking max multiplier from recent games
+    // Добавить стейт для отслеживания максимального множителя из последних игр
     const [, setRecentMaxMultiplier] = React.useState<number>(GAME_CONFIG.maxMultiplier);
 
-    // Input handlers
+    // Обработчики ввода
     const handleBetAmountChange = (value: string) => {
         const numValue = parseFloat(value) || 0;
         setState((prev) => ({
@@ -146,18 +146,18 @@ export const CSGOModifierGame: React.FC = () => {
         }));
     };
 
-    // Game logic
+    // Логика игры
     const startGame = () => {
         if (state.balance < state.betAmount) {
             addToast({
-                title: "Insufficient Balance",
-                description: "You don't have enough funds to place this bet.",
+                title: "Недостаточно средств",
+                description: "У вас недостаточно средств для размещения этой ставки.",
                 color: "danger",
             });
             return;
         }
 
-        // Deduct bet amount from balance
+        // Вычитание средств с баланса
         setState((prev) => ({
             ...prev,
             isPlaying: true,
@@ -169,25 +169,25 @@ export const CSGOModifierGame: React.FC = () => {
             })),
         }));
 
-        // Start game timer
+        // Запуск таймера игры
         gameTimerRef.current = setInterval(() => {
             setState((prev) => {
-                // Calculate chance of continuing
+                // Рассчитать шанс продолжения
                 const continueChance = calculateContinueChance(prev.currentMultiplier);
 
-                // Random check if game should continue
+                // Случайная проверка, должна ли игра продолжаться
                 if (Math.random() > continueChance) {
-                    // Game over - player lost
+                    // Игра окончена - игрок проиграл
                     clearInterval(gameTimerRef.current!);
                     clearInterval(graphUpdateTimerRef.current!);
 
                     addToast({
                         title: "Game Over!",
-                        description: `Modifier burned at ${formatMultiplier(prev.currentMultiplier)}`,
+                        description: `Множитель сгорел на ${formatMultiplier(prev.currentMultiplier)}`,
                         color: "danger",
                     });
 
-                    // Update recent max multiplier
+                    // Обновить максимальный множитель за последние игры
                     updateRecentMaxMultiplier(prev.currentMultiplier);
 
                     return {
@@ -200,17 +200,17 @@ export const CSGOModifierGame: React.FC = () => {
                                 win: false,
                                 payout: 0,
                             },
-                            ...prev.gameHistory.slice(0, 9), // Keep last 10 games
+                            ...prev.gameHistory.slice(0, 9), // Показать последние 10 игр
                         ],
                     };
                 }
 
-                // Game continues - increase multiplier
-                // Adjust the growth rate to make average around 1.0 with 20% deviation
+                // Игра продолжается - увеличить множитель
+                // Скорость роста, чтобы среднее значение было около 1.0 с 20% отклонением
                 const growthRate = 0.01;
                 const newMultiplier = Math.min(prev.currentMultiplier + growthRate, GAME_CONFIG.maxMultiplier);
 
-                // Update graph data
+                // Обновить данные графика
                 const newGraphData = [
                     ...prev.graphData.slice(1),
                     { time: prev.graphData[prev.graphData.length - 1].time + 1, multiplier: newMultiplier },
@@ -231,10 +231,10 @@ export const CSGOModifierGame: React.FC = () => {
         clearInterval(gameTimerRef.current!);
         clearInterval(graphUpdateTimerRef.current!);
 
-        // Calculate winnings with house edge
+        // Рассчитывайте выигрыш с преимуществом казино
         const winnings = state.betAmount * state.currentMultiplier * (1 - GAME_CONFIG.houseEdge);
 
-        // Update recent max multiplier
+        // Обновите последний максимальный множитель
         updateRecentMaxMultiplier(state.currentMultiplier);
 
         setState((prev) => ({
@@ -248,7 +248,7 @@ export const CSGOModifierGame: React.FC = () => {
                     win: true,
                     payout: winnings,
                 },
-                ...prev.gameHistory.slice(0, 9), // Keep last 10 games
+                ...prev.gameHistory.slice(0, 9),
             ],
         }));
 
@@ -259,38 +259,38 @@ export const CSGOModifierGame: React.FC = () => {
         });
     };
 
-    // Update the recent max multiplier based on last 3 games
+    // Обновить последний максимальный множитель, основанный на последних 3 играх
     const updateRecentMaxMultiplier = (currentMultiplier: number) => {
-        // Always set the upper bound to the current multiplier plus a small margin
+        // Всегда устанавливать верхнюю границу текущего множителя плюс небольшой запас
         setRecentMaxMultiplier(Math.min(currentMultiplier * 1.1, GAME_CONFIG.maxMultiplier));
     };
 
-    // Update the graph color based on the multiplier
+    // Измените цвет графика в зависимости от множителя
     const getGraphLineColor = (multiplier: number) => {
         return multiplier >= 1 ? "hsl(var(--heroui-success-500))" : "hsl(var(--heroui-danger-500))";
     };
 
-    // Determine the history item color based on win/loss and multiplier
+    // Определите цвет элемента истории в зависимости от выигрыша/проигрыша и множителя
     const getHistoryItemColor = (game: { win: boolean; multiplier: number }) => {
-        if (!game.win) return "bg-danger-100/20"; // Red for losses
-        if (game.multiplier < 1) return "bg-warning-100/20"; // Yellow for wins below 1x
-        return "bg-success-100/20"; // Green for wins above 1x
+        if (!game.win) return "bg-danger-100/20"; // Красный для проигрышей
+        if (game.multiplier < 1) return "bg-warning-100/20"; // Желтый для выигрышей ниже 1x
+        return "bg-success-100/20"; // Зеленый для выигрышей выше 1x
     };
 
-    // Determine the history text color based on win/loss and multiplier
+    // Определите цвет текста истории в зависимости от выигрыша/проигрыша и множителя
     const getHistoryTextColor = (game: { win: boolean; multiplier: number }) => {
-        if (!game.win) return "text-danger"; // Red for losses
-        if (game.multiplier < 1) return "text-warning"; // Yellow for wins below 1x
-        return "text-success"; // Green for wins above 1x
+        if (!game.win) return "text-danger"; // Красный для проигрышей
+        if (game.multiplier < 1) return "text-warning"; // Желтый для выигрышей ниже 1x
+        return "text-success"; // Зеленый для выигрышей выше 1x
     };
 
-    // Calculate the exact payout amount
+    // Рассчитайте точную сумму выигрыша
     const calculatePayout = (bet: number, multiplier: number): number => {
-        // Fix precision issues by using Math.round to 2 decimal places
+        // Используйте Math.round для фиксации проблем с точностью до 2х десятичных знаков
         return Math.round(bet * multiplier * (1 - GAME_CONFIG.houseEdge) * 100) / 100;
     };
 
-    // Cleanup timers on unmount
+    // Очистите таймеры при размонтировании
     React.useEffect(() => {
         return () => {
             if (gameTimerRef.current) clearInterval(gameTimerRef.current);
@@ -298,7 +298,7 @@ export const CSGOModifierGame: React.FC = () => {
         };
     }, []);
 
-    // Generate petals for animation
+    // Генерируйте лепестки для анимации
     const petalCount = 15;
     const petals = Array.from({ length: petalCount }, (_, i) => <SakuraPetal key={i} index={i} />);
 
@@ -306,9 +306,9 @@ export const CSGOModifierGame: React.FC = () => {
         <Card className="bg-content1 w-full max-w-4xl overflow-visible">
             <CardBody className="p-6">
                 <div className="flex flex-col gap-6">
-                    {/* Header */}
+                    {/* Заголовок */}
                     <div className="flex items-center justify-between">
-                        <h1 className="text-foreground text-2xl font-bold">CS:GO Style Modifier Game</h1>
+                        <h1 className="text-foreground text-2xl font-bold">Модификатор</h1>
                         <div className="flex items-center gap-2">
                             <Icon icon="lucide:wallet" className="text-primary" />
                             <span className="text-lg font-semibold">{formatCurrency(state.balance)}</span>
@@ -514,7 +514,7 @@ export const CSGOModifierGame: React.FC = () => {
                                     onPress={state.isPlaying ? stopGame : startGame}
                                     isDisabled={state.isPlaying && state.currentMultiplier < GAME_CONFIG.minMultiplier}
                                 >
-                                    {state.isPlaying ? "Cash Out" : "Start Game"}
+                                    {state.isPlaying ? "Снять ставку" : "Начать игру"}
                                 </Button>
 
                                 <Tooltip content="Add funds">
@@ -536,10 +536,10 @@ export const CSGOModifierGame: React.FC = () => {
 
                     {/* Game history - Fixed payout calculation and coloring */}
                     <div>
-                        <h2 className="mb-2 text-lg font-semibold">Game History</h2>
+                        <h2 className="mb-2 text-lg font-semibold">История игр</h2>
                         <div className="bg-content2 max-h-40 overflow-y-auto rounded-lg p-4">
                             {state.gameHistory.length === 0 ? (
-                                <p className="text-default-500 text-center">No games played yet</p>
+                                <p className="text-default-500 text-center">Игры не проводились</p>
                             ) : (
                                 <div className="space-y-2">
                                     {state.gameHistory.map((game, index) => {
@@ -580,10 +580,11 @@ export const CSGOModifierGame: React.FC = () => {
 
                     {/* Game info - Simplified */}
                     <div className="text-default-500 mt-2 text-sm">
-                        <p>Place your bet and try to cash out before the multiplier burns!</p>
+                        <p>Поставьте свою ставку и постарайтесь снять деньги, прежде чем множитель сгорит!</p>
                     </div>
                 </div>
             </CardBody>
         </Card>
     );
 };
+

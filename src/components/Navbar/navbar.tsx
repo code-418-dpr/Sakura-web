@@ -86,7 +86,7 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
                             handleNavigation(e, "main");
                         }}
                     >
-                        <Image alt="Sakura Logo" src="sakura.png" width={32} height={32} />
+                        <Image alt="Sakura Logo" src="/sakura.png" width={32} height={32} />
                         <p className="font-bold text-inherit">SAKURA</p>
                     </Link>
                 </NavbarBrand>

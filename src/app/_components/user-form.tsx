@@ -8,10 +8,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-// import { register } from "@/api/accounts";
 import PasswordInput from "@/components/password-input";
 import { awardReferalUserById, createUser, getUserById } from "@/data/user";
-// import { RegisterProps } from "@/models/requests/RegisterProps";
 import { baseRegistrationSchema } from "@/schemas/base-registration-schema";
 import { Alert, Button, Checkbox, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";

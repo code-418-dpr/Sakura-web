@@ -297,7 +297,38 @@ export const getLotteryPrice = async (id: string) => {
 };
 
 export const createLottery = async (data: LotteryRequestData) => {
-    return prisma.lottery.create({
-        data,
+    return prisma.$transaction(async (prisma) => {
+        // Сначала создаем лотерею
+        const lottery = await prisma.lottery.create({
+            data: {
+                title: data.title,
+                description: data.description,
+                isReal: data.isReal,
+                participantsCount: data.participantsCount,
+                vipParticipantsCount: data.vipParticipantsCount,
+                winnersCount: data.winnersCount,
+                primeWinnersCount: data.primeWinnersCount,
+                ticketPrice: data.ticketPrice,
+                vipDiscount: data.vipDiscount,
+                start: data.start,
+                end: data.end,
+                rules: data.rules,
+            },
+        });
+
+        // Затем создаем призы для этой лотереи
+        if (data.prizes.length > 0) {
+            await prisma.prize.createMany({
+                data: data.prizes.map((prize) => ({
+                    title: prize.title,
+                    moneyPrice: data.isReal ? prize.value : 0,
+                    pointsPrice: data.isReal ? 0 : prize.value,
+                    count: 1,
+                    lotteryId: lottery.id,
+                })),
+            });
+        }
+
+        return lottery;
     });
 };

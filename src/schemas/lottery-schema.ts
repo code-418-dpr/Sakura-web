@@ -6,7 +6,7 @@ export const baseSchema = z.object({
     isReal: z.boolean(),
     participantsCount: z.number().min(0),
     vipParticipantsCount: z.number().min(0),
-    winnersCount: z.number().min(0),
+    winnersCount: z.number().min(1),
     primeWinnersCount: z.number().min(0),
     ticketPrice: z.number().min(100),
     vipDiscount: z.number().min(0.1),

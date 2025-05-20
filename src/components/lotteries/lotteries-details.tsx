@@ -21,6 +21,8 @@ export default function LotteryDetails({ loteryId }: Props) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { user } = useAuth();
+    const [totalCost, setTotalCost] = useState<number>(0);
+    const [winChance, setWinChance] = useState<number>(0);
     useEffect(() => {
         const loadEvent = async () => {
             try {
@@ -37,6 +39,28 @@ export default function LotteryDetails({ loteryId }: Props) {
             void loadEvent();
         }
     }, [loteryId]);
+
+    useEffect(() => {
+        if (!lottery) return;
+
+        const { ticketPrice = 0, participantsCount = 0, vipParticipantsCount = 0, vipDiscount = 0 } = lottery;
+
+        const regularParticipants = participantsCount - vipParticipantsCount;
+        const vipTicketPrice = ticketPrice * (1 - vipDiscount / 100);
+
+        setTotalCost(ticketPrice * regularParticipants + vipTicketPrice * vipParticipantsCount);
+    }, [lottery]);
+
+    useEffect(() => {
+        if (!lottery) return;
+
+        const { winnersCount = 0, primeWinnersCount = 0, participantsCount = 0, vipParticipantsCount = 0 } = lottery;
+
+        const totalWinners = winnersCount + primeWinnersCount;
+        const totalParticipants = participantsCount + vipParticipantsCount;
+
+        setWinChance(totalParticipants > 0 ? totalWinners / totalParticipants : 0);
+    }, [lottery]);
 
     if (loading) {
         return (
@@ -119,6 +143,14 @@ export default function LotteryDetails({ loteryId }: Props) {
                         <Icon icon="iconoir:leaf" width="16" height="16" />
                     </span>
                     )
+                </p>
+                <p>Вероятность выигрыша: {(winChance * 100).toFixed(2)}%</p>
+                <p>
+                    Чистая прибыль:
+                    {(totalCost - lottery.prizes.reduce((sum, prize) => sum + prize.moneyPrice, 0)).toLocaleString(
+                        "ru-RU",
+                    )}{" "}
+                    ₽
                 </p>
             </div>
             {user?.role !== "ADMIN" ? (

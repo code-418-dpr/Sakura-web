@@ -55,8 +55,8 @@ export default function LotteryCreateForm({ className }: React.ComponentProps<"f
     }, [ticketPrice, participantsCount, vipParticipantsCount, vipDiscount]);
 
     useEffect(() => {
-        setWinChance((winnersCount + primeWinnersCount) / (participantsCount + vipParticipantsCount));
-    }, [winnersCount, participantsCount, vipParticipantsCount, primeWinnersCount]);
+        setWinChance(winnersCount / participantsCount);
+    }, [winnersCount, participantsCount]);
 
     useEffect(() => {
         setPrizes(Array.from({ length: winnersCount }, () => ({ title: "", value: 0 })));
@@ -175,8 +175,8 @@ export default function LotteryCreateForm({ className }: React.ComponentProps<"f
                     />
 
                     <Input
-                        label="Количество обычных участников"
-                        aria-label="Количество обычных участников"
+                        label="Количество всех участников"
+                        aria-label="Количество всех участников"
                         type="number"
                         variant="bordered"
                         value={participantsCount.toString()}
@@ -262,9 +262,11 @@ export default function LotteryCreateForm({ className }: React.ComponentProps<"f
                                             type="text"
                                             aria-label="Название приза"
                                             variant="bordered"
-                                            value={prize.title}
+                                            value={prize.title ?? ""}
                                             className="m-1"
-                                            onChange={(e) => { handlePrizeChange(i, "title", e.target.value); }}
+                                            onChange={(e) => {
+                                                handlePrizeChange(i, "title", e.target.value);
+                                            }}
                                         />
                                     )}
                                     <Input
@@ -274,14 +276,18 @@ export default function LotteryCreateForm({ className }: React.ComponentProps<"f
                                         variant="bordered"
                                         value={prize.value.toString()}
                                         className="m-1"
-                                        onChange={(e) => { handlePrizeChange(i, "value", e.target.value); }}
+                                        onChange={(e) => {
+                                            handlePrizeChange(i, "value", e.target.value);
+                                        }}
                                     />
                                 </AccordionItem>
                             ))}
                         </Accordion>
                     )}
-                    <p>Вероятность выигрыша: {(winChance || 0) * 100}%</p>
-                    <p>Чистая прибыль: {totalCost - prizes.reduce((sum, prize) => sum + prize.value, 0)}</p>
+                    <p>Вероятность выигрыша: {((winChance || 0) * 100).toFixed(2)}%</p>
+                    <p>
+                        Чистая прибыль: {(totalCost - prizes.reduce((sum, prize) => sum + prize.value, 0)).toFixed(2)}
+                    </p>
 
                     {formError && (
                         <div

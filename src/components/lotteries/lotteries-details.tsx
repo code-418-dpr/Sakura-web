@@ -54,12 +54,9 @@ export default function LotteryDetails({ loteryId }: Props) {
     useEffect(() => {
         if (!lottery) return;
 
-        const { winnersCount = 0, primeWinnersCount = 0, participantsCount = 0, vipParticipantsCount = 0 } = lottery;
+        const { winnersCount = 0, participantsCount = 0 } = lottery;
 
-        const totalWinners = winnersCount + primeWinnersCount;
-        const totalParticipants = participantsCount + vipParticipantsCount;
-
-        setWinChance(totalParticipants > 0 ? totalWinners / totalParticipants : 0);
+        setWinChance(participantsCount > 0 ? winnersCount / participantsCount : 0);
     }, [lottery]);
 
     if (loading) {

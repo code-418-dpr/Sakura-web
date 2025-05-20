@@ -18,6 +18,14 @@ import { Image } from "@heroui/react";
 
 // src/app/page.tsx
 
+// src/app/page.tsx
+
+// src/app/page.tsx
+
+// src/app/page.tsx
+
+// src/app/page.tsx
+
 export default function Home() {
     const [activeTab, setActiveTab] = useState<PageTab>("main");
     const [showNavbar] = useState(true);

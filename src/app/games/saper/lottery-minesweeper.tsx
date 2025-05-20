@@ -132,7 +132,7 @@ export const LotteryMinesweeper: React.FC = () => {
     const progressPercentage = (gameState.revealedCount / MAX_REVEALS) * 100;
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex w-9/10 flex-col gap-4 md:w-1/3">
             {/* Game stats */}
             <div className="mb-2 flex items-center justify-between">
                 <div className="flex flex-col">

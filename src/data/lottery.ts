@@ -295,7 +295,6 @@ export const getLotteryPrice = async (id: string) => {
         primeTicketPrice: lottery.ticketPrice * (lottery.vipDiscount / 100),
     };
 };
-
 export const createLottery = async (data: LotteryRequestData) => {
     return prisma.$transaction(async (prisma) => {
         // Сначала создаем лотерею
@@ -317,9 +316,10 @@ export const createLottery = async (data: LotteryRequestData) => {
         });
 
         // Затем создаем призы для этой лотереи
-        if (data.prizes.length > 0) {
+        const prizes = data.prizes;
+        if (prizes.length > 0) {
             await prisma.prize.createMany({
-                data: data.prizes.map((prize) => ({
+                data: prizes.map((prize) => ({
                     title: prize.title,
                     moneyPrice: data.isReal ? prize.value : 0,
                     pointsPrice: data.isReal ? 0 : prize.value,

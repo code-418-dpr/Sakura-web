@@ -47,7 +47,11 @@ export const createTicket = async (userId: string, lotteryId: string, price: num
         },
     });
 };
-
+export const deleteTicket = async (id: string) => {
+    return db.ticket.delete({
+        where: { number: Number(id) },
+    });
+};
 export async function getLotteryWinnerTickets(lotteryId: string) {
     const lottery = await db.lottery.findUnique({ where: { id: lotteryId }, select: { winnersCount: true } });
     if (!lottery) {

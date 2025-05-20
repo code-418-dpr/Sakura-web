@@ -55,6 +55,8 @@ export const LotteryMinesweeper: React.FC = () => {
 
     // Game state
     const [gameState, setGameState] = React.useState<GameState | null>(null);
+    const [showCooldownModal, setShowCooldownModal] = React.useState(false);
+    const [remainingTime, setRemainingTime] = React.useState("");
     // ← теперь явно boolean, а не literal false
     const [isRestarting, setIsRestarting] = React.useState<boolean>(false);
     const [isCollecting, setIsCollecting] = React.useState<boolean>(false);
@@ -62,6 +64,36 @@ export const LotteryMinesweeper: React.FC = () => {
     const [betAmount, setBetAmount] = React.useState("");
     const [error, setError] = React.useState("");
     // Initialize game
+    React.useEffect(() => {
+        const lastPlayed = localStorage.getItem("saper_last_played");
+        if (lastPlayed) {
+            const lastTime = parseInt(lastPlayed, 10);
+            const currentTime = Date.now();
+
+            if (currentTime - lastTime < 3600000) {
+                setShowCooldownModal(true);
+                startCooldownTimer(lastTime);
+            }
+        }
+    }, []);
+    const startCooldownTimer = (lastTime: number) => {
+        const interval = setInterval(() => {
+            const currentTime = Date.now();
+            const diff = currentTime - lastTime;
+
+            if (diff >= 3600000) {
+                localStorage.removeItem("saper_last_played");
+                setShowCooldownModal(false);
+                clearInterval(interval);
+            } else {
+                const remaining = 3600000 - diff;
+                const minutes = Math.floor(remaining / 60000);
+                const seconds = Math.floor((remaining % 60000) / 1000);
+                setRemainingTime(`${minutes} минут ${seconds} секунд`);
+            }
+        }, 1000);
+    };
+
     function initializeGame(bet: number): GameState {
         const totalTiles = TOTAL_TILES;
         const totalBombs = Math.floor(totalTiles * 0.3);
@@ -147,6 +179,7 @@ export const LotteryMinesweeper: React.FC = () => {
             if (clickedTile.hasBomb) {
                 gameOver = true;
                 updatedScore = 0;
+                localStorage.setItem("saper_last_played", Date.now().toString());
             } else {
                 updatedScore += clickedTile.prize;
                 if (revealedCount >= MAX_REVEALS) {
@@ -186,6 +219,7 @@ export const LotteryMinesweeper: React.FC = () => {
                             currentRoundScore: 0,
                         };
                     });
+                    localStorage.setItem("saper_last_played", Date.now().toString());
                 }
             }
         } finally {
@@ -216,46 +250,70 @@ export const LotteryMinesweeper: React.FC = () => {
     const progressPercentage = (gameState ? gameState.revealedCount / MAX_REVEALS : 0) * 100;
     return (
         <div className="flex w-9/10 flex-col gap-4 md:w-1/3">
-            <Modal isOpen={showBetModal} hideCloseButton>
+            <Modal isOpen={showCooldownModal} hideCloseButton>
                 <ModalContent>
-                    <ModalHeader>Установите ставку</ModalHeader>
+                    <ModalHeader>Пожалуйста, подождите</ModalHeader>
                     <ModalBody>
-                        <Input
-                            label="Сумма ставки (бонусные баллы)"
-                            type="number"
-                            value={betAmount}
-                            onChange={(e) => {
-                                setBetAmount(e.target.value);
-                            }}
-                            endContent={
-                                <div className="flex items-center">
-                                    <Icon icon="iconoir:leaf" className="mr-2" />
-                                </div>
-                            }
-                        />
-                        {error && <div className="text-danger-500 mt-2 text-sm">{error}</div>}
+                        <p className="text-center">
+                            Вы сможете сыграть снова через: <br />
+                            <span className="text-primary font-bold">{remainingTime}</span>
+                        </p>
                     </ModalBody>
                     <ModalFooter>
                         <Button
-                            variant="light"
+                            fullWidth
+                            color="primary"
                             onPress={() => {
                                 router.push("/games");
                             }}
                         >
-                            Отменить
-                        </Button>
-                        <Button
-                            color="primary"
-                            onPress={() => {
-                                void handleStartGame();
-                            }}
-                            isDisabled={!betAmount || isNaN(Number(betAmount))}
-                        >
-                            Начать игру
+                            Вернуться к играм
                         </Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+            {!showCooldownModal && (
+                <Modal isOpen={showBetModal} hideCloseButton>
+                    <ModalContent>
+                        <ModalHeader>Установите ставку</ModalHeader>
+                        <ModalBody>
+                            <Input
+                                label="Сумма ставки (бонусные баллы)"
+                                type="number"
+                                value={betAmount}
+                                onChange={(e) => {
+                                    setBetAmount(e.target.value);
+                                }}
+                                endContent={
+                                    <div className="flex items-center">
+                                        <Icon icon="iconoir:leaf" className="mr-2" />
+                                    </div>
+                                }
+                            />
+                            {error && <div className="text-danger-500 mt-2 text-sm">{error}</div>}
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button
+                                variant="light"
+                                onPress={() => {
+                                    router.push("/games");
+                                }}
+                            >
+                                Отменить
+                            </Button>
+                            <Button
+                                color="primary"
+                                onPress={() => {
+                                    void handleStartGame();
+                                }}
+                                isDisabled={!betAmount || isNaN(Number(betAmount))}
+                            >
+                                Начать игру
+                            </Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+            )}
             {gameState ? (
                 <>
                     {/* Game stats */}

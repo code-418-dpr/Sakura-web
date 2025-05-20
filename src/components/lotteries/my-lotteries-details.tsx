@@ -28,6 +28,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 
 import ModalOrDrawer from "../modal-or-drawer";
 import PaymentForm from "../payment-form";
+import { TicketGame } from "./tickets-game";
 
  
 
@@ -39,6 +40,8 @@ interface Props {
 }
 export default function MyLotteryDetails({ userId, loteryId }: Props) {
     const [lottery, setLottery] = useState<UsersLotteryTicket | null>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -166,9 +169,12 @@ export default function MyLotteryDetails({ userId, loteryId }: Props) {
                                 <TableColumn>Приз</TableColumn>
                             </>
                         ) : (
-                            <TableColumn colSpan={2} className="text-center">
-                                Статус и приз
-                            </TableColumn>
+                            <>
+                                <TableColumn colSpan={1} className="text-center">
+                                    Статус и приз
+                                </TableColumn>
+                                <TableColumn>Играть</TableColumn>
+                            </>
                         )}
                     </TableHeader>
 
@@ -182,6 +188,17 @@ export default function MyLotteryDetails({ userId, loteryId }: Props) {
                                         <TableCell>{ticket.price} ₽</TableCell>
                                         <TableCell colSpan={1} className="text-center">
                                             Лотерея ещё не завершилась
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="shadow"
+                                                onPress={() => {
+                                                    setSelectedTicketId(String(ticket.number));
+                                                    onOpen(); // Открывает модалку
+                                                }}
+                                            >
+                                                Играть
+                                            </Button>
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -254,6 +271,25 @@ export default function MyLotteryDetails({ userId, loteryId }: Props) {
                         </Table>
                     </div>
                 )}
+                <ModalOrDrawer isOpen={isOpen} onOpenChangeAction={onOpenChange} label="Последний шанс" size="xl">
+                    {selectedTicketId && (
+                        <TicketGame
+                            ticketId={selectedTicketId}
+                            ticketPrice={
+                                lottery.userTickets.find((t) => String(t.number) === selectedTicketId)?.price ?? 0
+                            }
+                            lotteryId={loteryId}
+                            onClose={() => {
+                                setSelectedTicketId(null);
+                                onOpenChange(); // Закрываем модалку
+                            }}
+                            onTicketUpdate={async () => {
+                                const updated = await getUserLotteryById(userId!, loteryId);
+                                setLottery(updated);
+                            }}
+                        />
+                    )}
+                </ModalOrDrawer>
             </div>
         </>
     );

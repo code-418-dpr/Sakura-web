@@ -46,7 +46,15 @@ export const games: Game[] = [
         title: "Катящаяся бочка",
         description: "Сделайте Вашу ставку и успейте забрать деньги пока бочка не разбилась",
         imageUrl: "https://avatars.mds.yandex.net/i?id=fb1c1cf29ca8f31b0d0fb2a1b35e1944_l-12473832-images-thumbs&n=13",
-        pageUrl: "five-game",
+        pageUrl: "modifier",
+        isForVip: false,
+    },
+    {
+        id: "8",
+        title: "Дорожки",
+        description: "Выберите свою дорогу к успеху",
+        imageUrl: "https://avatars.mds.yandex.net/i?id=fb1c1cf29ca8f31b0d0fb2a1b35e1944_l-12473832-images-thumbs&n=13",
+        pageUrl: "tree-round",
         isForVip: false,
     },
 ];

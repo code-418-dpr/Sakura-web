@@ -21,7 +21,7 @@ export const ROW_LABELS = ["A", "B", "C", "D", "F", "G", "H", "I", "J", "K"];
 
 // Генерация пустой доски 10×10 с типом CellState[][]
 const createEmptyBoard = (): Board =>
-    Array.from<CellState[]>({ length: ROWS }, () => Array.from<CellState>({ length: COLS }, () => "empty"));
+    Array.from({ length: ROWS }, () => Array.from({ length: COLS }, (): CellState => "empty")) as Board;
 
 const isValidPlacement = (board: Board, size: number, row: number, col: number, orientation: Orientation): boolean => {
     if ((orientation === "horizontal" && col + size > COLS) || (orientation === "vertical" && row + size > ROWS)) {
@@ -170,7 +170,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
             const shots = state.player.shotsBoard.map((r) => [...r]);
             let message = "";
             let turn = false;
-            let over = state.gameOver;
+            let over: boolean = state.gameOver;
             let win = state.winner;
 
             const cell = state.bot.board[row][col];
@@ -269,7 +269,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
             // 3) подготовим переменные для обновлённого состояния
             let message = "";
             let turn = true;
-            let over = state.gameOver;
+            let over: boolean = state.gameOver;
             let win = state.winner;
 
             // **ВАЖНО**: объявляем заранее, чтобы не было «Cannot find name 'updated'»

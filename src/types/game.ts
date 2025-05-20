@@ -4,4 +4,5 @@ export interface Game {
     description: string;
     imageUrl: string;
     pageUrl: string;
+    isForVip: boolean;
 }

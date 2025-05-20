@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function GamesCards({ paginatedData }: Props) {
-    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const router = useRouter();
     const { user } = useAuth();
 
@@ -79,7 +79,7 @@ export default function GamesCards({ paginatedData }: Props) {
                     </CardBody>
                 </Card>
                 <ModalOrDrawer label="Подтверждение" isOpen={isOpen} onOpenChangeAction={onOpenChange}>
-                    <AcceptGame onClose={onClose} />
+                    <AcceptGame />
                 </ModalOrDrawer>
             </div>
         </>

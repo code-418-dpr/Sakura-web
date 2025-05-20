@@ -64,33 +64,12 @@ export const WordGame: React.FC = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Get a random word from the word list
-    function getRandomWord(): string {
+    const getRandomWord = React.useCallback((): string => {
         return wordList[Math.floor(Math.random() * wordList.length)].toLowerCase();
-    }
-
-    // Handle keyboard input
-    const handleKeyPress = (key: string) => {
-        if (gameState.gameStatus !== "playing") return;
-
-        if (key === "Enter") {
-            submitGuess();
-        } else if (key === "Backspace") {
-            if (gameState.currentGuess.length > 0) {
-                setGameState((prev) => ({
-                    ...prev,
-                    currentGuess: prev.currentGuess.slice(0, -1),
-                }));
-            }
-        } else if (/^[a-z]$/i.test(key) && gameState.currentGuess.length < 5) {
-            setGameState((prev) => ({
-                ...prev,
-                currentGuess: prev.currentGuess + key.toLowerCase(),
-            }));
-        }
-    };
+    }, []);
 
     // Submit the current guess
-    const submitGuess = () => {
+    const submitGuess = React.useCallback(() => {
         if (gameState.currentGuess.length !== 5) return;
 
         if (!wordList.includes(gameState.currentGuess.toLowerCase())) {
@@ -107,18 +86,13 @@ export const WordGame: React.FC = () => {
         const newGuesses = [...gameState.guesses];
         newGuesses[gameState.currentAttempt] = gameState.currentGuess;
 
-        // Check if the guess is correct
         const isCorrect = gameState.currentGuess.toLowerCase() === gameState.targetWord;
-
-        // Calculate letter states
         const newLetterStates = { ...gameState.letterStates };
 
-        // First mark all letters as absent
         for (const letter of gameState.currentGuess) {
             newLetterStates[letter.toLowerCase()] = "absent";
         }
 
-        // Then check for correct positions
         for (let i = 0; i < gameState.currentGuess.length; i++) {
             const letter = gameState.currentGuess[i].toLowerCase();
             if (letter === gameState.targetWord[i]) {
@@ -126,18 +100,15 @@ export const WordGame: React.FC = () => {
             }
         }
 
-        // Finally check for present but wrong position
         for (let i = 0; i < gameState.currentGuess.length; i++) {
             const letter = gameState.currentGuess[i].toLowerCase();
             if (letter !== gameState.targetWord[i] && gameState.targetWord.includes(letter)) {
-                // Only mark as present if it's not already marked as correct
                 if (newLetterStates[letter] !== "correct") {
                     newLetterStates[letter] = "present";
                 }
             }
         }
 
-        // Calculate score if won
         let earnedPoints = 0;
         if (isCorrect) {
             const attemptNumber = gameState.currentAttempt + 1;
@@ -156,13 +127,36 @@ export const WordGame: React.FC = () => {
             totalScore: prev.totalScore + earnedPoints,
         }));
 
-        // Show results modal if game is over
         if (isCorrect || gameState.currentAttempt + 1 >= MAX_ATTEMPTS) {
             setTimeout(() => {
                 onOpen();
             }, 1000);
         }
-    };
+    }, [gameState, onOpen]);
+
+    // Handle keyboard input
+    const handleKeyPress = React.useCallback(
+        (key: string) => {
+            if (gameState.gameStatus !== "playing") return;
+
+            if (key === "Enter") {
+                submitGuess();
+            } else if (key === "Backspace") {
+                if (gameState.currentGuess.length > 0) {
+                    setGameState((prev) => ({
+                        ...prev,
+                        currentGuess: prev.currentGuess.slice(0, -1),
+                    }));
+                }
+            } else if (/^[a-z]$/i.test(key) && gameState.currentGuess.length < 5) {
+                setGameState((prev) => ({
+                    ...prev,
+                    currentGuess: prev.currentGuess + key.toLowerCase(),
+                }));
+            }
+        },
+        [gameState, submitGuess],
+    );
 
     // Start a new game
     const startNewGame = () => {

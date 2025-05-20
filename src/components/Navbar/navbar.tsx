@@ -38,7 +38,6 @@ interface NavbarProps {
 }
 
 export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarProps) {
-    const tabs: PageTab[] = ["catalog", "sakura", "games"];
     const { isOpen: isAuthOpen, onOpen: onAuthOpen, onOpenChange: onAuthOpenChange } = useDisclosure();
     const { isOpen: isReferalOpen, onOpen: onReferalOpen, onOpenChange: onReferalOpenChange } = useDisclosure();
     const { isOpen: isBalanceOpen, onOpen: onBalanceOpen, onOpenChange: onBalanceOpenChange } = useDisclosure();
@@ -49,11 +48,20 @@ export default function NavbarElement({ activeTab, setActiveTabAction }: NavbarP
         setActiveTabAction(tab);
     };
 
+    const tabs: PageTab[] = React.useMemo(() => {
+        const baseTabs: PageTab[] = ["sakura", "games"];
+        if (user?.role === "ADMIN") {
+            return ["admin", ...baseTabs];
+        }
+        return ["catalog", ...baseTabs];
+    }, [user?.role]);
+
     const getTabLabel = (tab: PageTab): string => {
         const labels = {
             catalog: "Лотереи",
             sakura: "Сакура",
             games: "Игры",
+            admin: "Админ Панель",
         } as const;
 
         if (tab in labels) {

@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description: "Создано в рамках Кубка России по спортивному программированию",
     icons: {
         icon: "/favicon.ico",
+        apple: '/apple-touch-icon.png',
     },
 };
 
